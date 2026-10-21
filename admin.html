@@ -668,6 +668,7 @@
         <button class="admin-tab" data-tab="gallery">Gallery</button>
         <button class="admin-tab" data-tab="news">News</button>
         <button class="admin-tab" data-tab="branches">Branches</button>
+        <button class="admin-tab" data-tab="quotes">Quotes</button>
         <button class="admin-tab" data-tab="messages">Messages</button>
       </div>
     </div>
@@ -865,6 +866,42 @@
         </div>
         <div>
           <div class="item-list" id="newsList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- QUOTES TAB -->
+    <!-- ========================================== -->
+    <section class="admin-panel-section" id="tab-quotes">
+      <div class="container admin-grid">
+        <div class="form-card">
+          <h3 id="quoteFormTitle">Add New Quote</h3>
+          <input type="hidden" id="quoteId">
+          <div class="form-field">
+            <label>Quote Text</label>
+            <textarea id="quoteText" rows="4" placeholder="e.g. God has not called us to sit in church — He has called us to be the church."></textarea>
+          </div>
+          <div class="form-field">
+            <label>Author Name</label>
+            <input type="text" id="quoteAuthor" placeholder="e.g. Rev. Anne Francis Kpeke-Johnson">
+          </div>
+          <div class="form-field">
+            <label>Author Role / Title</label>
+            <input type="text" id="quoteRole" placeholder="e.g. Lead Pastor, Living Waters ICC">
+          </div>
+          <div class="form-field">
+            <label>Status</label>
+            <select id="quoteActive">
+              <option value="true">Active (shown on website)</option>
+              <option value="false">Inactive (hidden)</option>
+            </select>
+          </div>
+          <button class="btn btn-primary btn-block" id="quoteSaveBtn">Add Quote</button>
+          <button class="btn btn-outline btn-block" id="quoteCancelBtn" style="margin-top:10px; display:none;">Cancel Edit</button>
+        </div>
+        <div>
+          <div class="item-list" id="quoteList"></div>
         </div>
       </div>
     </section>

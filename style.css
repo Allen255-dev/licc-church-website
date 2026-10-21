@@ -688,6 +688,83 @@ section { padding: 96px 0; }
   .pastor-quote-author { align-items: center; }
 }
 
+/* ============ QUOTES SECTION ============ */
+.quotes-section { padding: 80px 0; background: var(--bg-warm-2); }
+
+.quotes-slider {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.quote-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 32px 28px;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-top: 4px solid var(--gold);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.quote-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lift);
+}
+
+.quote-card .quote-mark {
+  width: 28px;
+  height: auto;
+  color: var(--gold);
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.quote-card blockquote {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+  font-style: italic;
+  margin: 0;
+  flex: 1;
+}
+
+.quote-author {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  margin-top: auto;
+}
+
+.quote-author-name {
+  font-weight: 700;
+  color: var(--green-deep);
+  font-size: 0.9rem;
+}
+
+.quote-author-role {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+[data-theme="dark"] .quote-card {
+  background: #101D15;
+  border-top-color: var(--gold);
+}
+
+[data-theme="dark"] .quote-card blockquote { color: #EDF5F0; }
+[data-theme="dark"] .quote-author-name { color: #82E5A9; }
+[data-theme="dark"] .quote-author-role { color: #8BA194; }
+[data-theme="dark"] .quote-author { border-top-color: rgba(130,229,169,0.18); }
+
 /* Stat row & Branch stats card */
 
 .branch-stats-card {

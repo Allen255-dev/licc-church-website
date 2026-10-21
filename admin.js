@@ -49,6 +49,7 @@ function showAdmin() {
   loadNews();
   loadMessages();
   loadAdminBranches();
+  loadQuotes();
 }
 
 document.getElementById('loginBtn').addEventListener('click', async function () {
@@ -871,6 +872,107 @@ if (branchSaveBtn) {
     } finally {
       btn.disabled = false;
       btn.textContent = id ? 'Save Changes' : 'Save Branch';
+    }
+  });
+}
+
+// ============================================================
+// QUOTES
+// ============================================================
+const quoteSaveBtn = document.getElementById('quoteSaveBtn');
+const quoteCancelBtn = document.getElementById('quoteCancelBtn');
+
+async function loadQuotes() {
+  const list = document.getElementById('quoteList');
+  if (!isConfigured()) { list.innerHTML = '<div class="empty-state">Connect Supabase to see quotes here.</div>'; return; }
+  const { data, error } = await supabaseClient.from('quotes').select('*').order('created_at', { ascending: false });
+  if (error) { showToast('Error loading quotes: ' + error.message, true); return; }
+  if (!data || data.length === 0) { list.innerHTML = '<div class="empty-state">No quotes yet. Add your first one!</div>'; return; }
+  list.innerHTML = data.map(function (q) {
+    var statusBadge = q.active
+      ? '<span style="background:#1A9B52;color:white;font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:100px;">Active</span>'
+      : '<span style="background:#ccc;color:#555;font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:100px;">Inactive</span>';
+    return '<div class="item-row">' +
+      '<div class="thumb" style="font-size:1.8rem; display:flex; align-items:center; justify-content:center; background:var(--bg-warm-2);">\u201C</div>' +
+      '<div class="info"><h4>' + escapeHtml(q.quote_text.substring(0, 80)) + (q.quote_text.length > 80 ? '…' : '') + '</h4>' +
+      '<p>' + escapeHtml(q.author_name) + (q.author_role ? ' · ' + escapeHtml(q.author_role) : '') + ' &nbsp;' + statusBadge + '</p></div>' +
+      '<div class="actions">' +
+      '<button class="icon-btn edit" onclick="editQuote(\'' + q.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>' +
+      '<button class="icon-btn danger" onclick="deleteQuote(\'' + q.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="#C42F2F" stroke-width="1.6"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg></button>' +
+      '</div></div>';
+  }).join('');
+}
+
+window.editQuote = async function (id) {
+  const { data } = await supabaseClient.from('quotes').select('*').eq('id', id).single();
+  if (!data) return;
+  document.getElementById('quoteId').value = data.id;
+  document.getElementById('quoteText').value = data.quote_text;
+  document.getElementById('quoteAuthor').value = data.author_name;
+  document.getElementById('quoteRole').value = data.author_role || '';
+  document.getElementById('quoteActive').value = data.active ? 'true' : 'false';
+  document.getElementById('quoteFormTitle').textContent = 'Edit Quote';
+  quoteSaveBtn.textContent = 'Save Changes';
+  quoteCancelBtn.style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+window.deleteQuote = async function (id) {
+  if (!confirm('Delete this quote?')) return;
+  const { error } = await supabaseClient.from('quotes').delete().eq('id', id);
+  if (error) { showToast('Error deleting: ' + error.message, true); return; }
+  showToast('Quote deleted');
+  loadQuotes();
+};
+
+function resetQuoteForm() {
+  document.getElementById('quoteId').value = '';
+  document.getElementById('quoteText').value = '';
+  document.getElementById('quoteAuthor').value = '';
+  document.getElementById('quoteRole').value = '';
+  document.getElementById('quoteActive').value = 'true';
+  document.getElementById('quoteFormTitle').textContent = 'Add New Quote';
+  quoteSaveBtn.textContent = 'Add Quote';
+  quoteCancelBtn.style.display = 'none';
+}
+
+if (quoteCancelBtn) quoteCancelBtn.addEventListener('click', resetQuoteForm);
+
+if (quoteSaveBtn) {
+  quoteSaveBtn.addEventListener('click', async function () {
+    if (!isConfigured()) { showToast('Connect Supabase first', true); return; }
+    const id = document.getElementById('quoteId').value;
+    const quote_text = document.getElementById('quoteText').value.trim();
+    const author_name = document.getElementById('quoteAuthor').value.trim();
+    const author_role = document.getElementById('quoteRole').value.trim();
+    const active = document.getElementById('quoteActive').value === 'true';
+
+    if (!quote_text || !author_name) {
+      showToast('Please fill in the quote text and author name', true);
+      return;
+    }
+
+    const btn = this;
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+
+    try {
+      const payload = { quote_text, author_name, author_role, active };
+      let error;
+      if (id) {
+        ({ error } = await supabaseClient.from('quotes').update(payload).eq('id', id));
+      } else {
+        ({ error } = await supabaseClient.from('quotes').insert(payload));
+      }
+      if (error) throw error;
+      showToast(id ? 'Quote updated ✓' : 'Quote added ✓');
+      resetQuoteForm();
+      loadQuotes();
+    } catch (err) {
+      showToast('Error saving quote: ' + err.message, true);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = id ? 'Save Changes' : 'Add Quote';
     }
   });
 }

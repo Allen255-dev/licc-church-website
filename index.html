@@ -327,6 +327,17 @@
       </div>
     </section>
 
+    <!-- ============ QUOTES SECTION (dynamic from admin) ============ -->
+    <section class="quotes-section" id="quotesSection" style="display:none;">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="eyebrow">Words of Faith</div>
+          <h2>From Our Pastors</h2>
+        </div>
+        <div class="quotes-slider reveal" id="quotesSlider"></div>
+      </div>
+    </section>
+
     <!-- ============ OUR BRANCHES PREVIEW ============ -->
     <section class="section-alt">
       <div class="container">
@@ -469,7 +480,37 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    (function () {
+      try {
+        if (typeof SUPABASE_URL === 'undefined' || SUPABASE_URL.indexOf('YOUR_SUPABASE') !== -1) return;
+        var client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        client.from('quotes').select('*').eq('active', true).order('created_at', { ascending: false })
+          .then(function (res) {
+            if (!res.data || res.data.length === 0) return;
+            var section = document.getElementById('quotesSection');
+            var slider = document.getElementById('quotesSlider');
+            slider.innerHTML = res.data.map(function (q) {
+              return '<div class="quote-card">' +
+                '<svg class="quote-mark" viewBox="0 0 48 36" fill="none" aria-hidden="true">' +
+                '<path d="M0 36V22.5C0 14.1 5.1 7.2 15.3 1.8L18 6.3C13.5 8.7 10.8 12 10.2 16.5H18V36H0ZM30 36V22.5C30 14.1 35.1 7.2 45.3 1.8L48 6.3C43.5 8.7 40.8 12 40.2 16.5H48V36H30Z" fill="currentColor"/>' +
+                '</svg>' +
+                '<blockquote>' + q.quote_text.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</blockquote>' +
+                '<div class="quote-author">' +
+                '<span class="quote-author-name">' + (q.author_name || '').replace(/</g, '&lt;') + '</span>' +
+                (q.author_role ? '<span class="quote-author-role">' + q.author_role.replace(/</g, '&lt;') + '</span>' : '') +
+                '</div>' +
+                '</div>';
+            }).join('');
+            section.style.display = '';
+          });
+      } catch (e) {}
+    })();
+  </script>
   <script src="main.js"></script>
+
   <script>
     (function () {
       function isLikelyServiceTime() {

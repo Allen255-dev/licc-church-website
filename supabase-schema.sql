@@ -135,3 +135,18 @@ create policy "Authenticated can delete messages" on messages for delete using (
 -- (Also create this manually in Dashboard → Storage → New Bucket
 --  named "media", set to PUBLIC — see setup guide for details)
 -- ============================================================
+-- QUOTES TABLE
+create table quotes (
+  id uuid primary key default gen_random_uuid(),
+  quote_text text not null,
+  author_name text not null,
+  author_role text,
+  active boolean default true,
+  created_at timestamptz default now()
+);
+
+alter table quotes enable row level security;
+create policy "Public can view quotes" on quotes for select using (true);
+create policy "Authenticated can insert quotes" on quotes for insert with check (auth.role() = 'authenticated');
+create policy "Authenticated can update quotes" on quotes for update using (auth.role() = 'authenticated');
+create policy "Authenticated can delete quotes" on quotes for delete using (auth.role() = 'authenticated');
