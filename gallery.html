@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery | Living Waters International Christian Center</title>
+  <meta name="description"
+    content="Photo gallery from services and events at Living Waters International Christian Center, Port Harcourt.">
+  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    (function () {
+      var t = localStorage.getItem('licc-theme');
+      if (t === 'dark' || (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .gallery-grid .photo-placeholder,
+    .gallery-grid .gallery-item {
+      aspect-ratio: 1;
+      min-height: 0;
+    }
+
+    .gallery-grid .tall {
+      grid-row: span 2;
+      aspect-ratio: unset;
+    }
+
+    @media (max-width:980px) {
+      .gallery-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width:760px) {
+      .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .gallery-grid .tall {
+        grid-row: span 1;
+        aspect-ratio: 1;
+      }
+
+      /* Show captions always on touch */
+      .gallery-item .gallery-caption {
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="brand">
+        <img src="logo.png" alt="LICC logo">
+        <span class="brand-text">Living Waters<span>International Christian Center</span></span>
+      </a>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="branches.html">Branches</a>
+        <a href="service-times.html">Service Times</a>
+        <a href="live.html" class="nav-live"><span class="live-dot" style="display:none;"></span>Live</a>
+        <a href="sermons.html">Sermons</a>
+        <a href="events.html">Events</a>
+        <a href="gallery.html" class="active">Gallery</a>
+        <a href="blog.html">News</a>
+        <a href="contact.html">Contact</a>
+        <a href="give.html" class="nav-cta">Give</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle-btn" aria-label="Toggle dark and light mode" title="Switch theme (Dark / Light)">
+          <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <div class="nav-overlay"></div>
+
+  <main id="main">
+
+    <section class="page-hero">
+      <svg class="hero-arc" viewBox="0 0 1200 400" preserveAspectRatio="none" aria-hidden="true"
+        style="position:absolute;inset:0;opacity:0.4;">
+        <path d="M -50 250 C 250 50, 750 30, 1250 180" stroke="#E8B339" stroke-width="2" fill="none" opacity="0.5" />
+      </svg>
+      <div class="page-hero-inner">
+        <div class="breadcrumb"><a href="index.html">Home</a> / Gallery</div>
+        <h1>Moments from our church life.</h1>
+        <p>A look at worship, fellowship, and community life at LICC.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="gallery-grid reveal" id="galleryGrid">
+          <div class="photo-placeholder tall"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <path d="M21 15l-5-5L5 21" />
+            </svg>Photo</div>
+          <div class="photo-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <path d="M21 15l-5-5L5 21" />
+            </svg>Photo</div>
+          <div class="photo-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <path d="M21 15l-5-5L5 21" />
+            </svg>Photo</div>
+          <div class="photo-placeholder tall"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <path d="M21 15l-5-5L5 21" />
+            </svg>Photo</div>
+          <div class="photo-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <path d="M21 15l-5-5L5 21" />
+            </svg>Photo</div>
+          <div class="photo-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <path d="M21 15l-5-5L5 21" />
+            </svg>Photo</div>
+        </div>
+        <p style="margin-top:30px; font-size:0.88rem; text-align:center;" id="galleryFallbackNote"><em>Note to church
+            admin: these are sample placeholders. Upload real photos through the <a href="admin.html">admin panel</a>
+            and they'll automatically appear here.</em></p>
+      </div>
+    </section>
+
+    <section style="padding-top:0;">
+      <div class="container">
+        <div class="cta-banner reveal">
+          <div>
+            <h2>Be part of the next photo</h2>
+            <p>Join us this Sunday — we'd love to have you in our church family.</p>
+          </div>
+          <a href="service-times.html" class="btn btn-gold">Plan Your Visit</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">
+            <img src="logo.png" alt="LICC logo">
+            <span class="footer-brand-text">Living Waters ICC</span>
+          </div>
+          <p style="max-width:280px; font-size:0.92rem;">A church family in Port Harcourt devoted to worship, the Word,
+            and walking with one another through life.</p>
+          <div class="social-row" style="margin-top:22px;">
+            <a href="https://www.facebook.com/theliccglobal" target="_blank" rel="noopener" aria-label="Facebook"><svg
+                viewBox="0 0 24 24" fill="white">
+                <path
+                  d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z" />
+              </svg></a>
+            <a href="https://www.youtube.com/@liccglobaltv" target="_blank" rel="noopener" aria-label="YouTube"><svg
+                viewBox="0 0 24 24" fill="white">
+                <path
+                  d="M22.5 7.2s-.2-1.6-.9-2.3c-.8-.9-1.7-.9-2.2-1C16 3.6 12 3.6 12 3.6h0s-4 0-7.4.3c-.5.1-1.4.1-2.2 1-.7.7-.9 2.3-.9 2.3S1.2 9 1.2 10.9v1.9c0 1.9.3 3.7.3 3.7s.2 1.6.9 2.3c.8.9 1.9.9 2.4 1 1.7.2 7.2.3 7.2.3s4 0 7.4-.3c.5-.1 1.4-.1 2.2-1 .7-.7.9-2.3.9-2.3s.3-1.9.3-3.7v-1.9c0-1.9-.3-3.7-.3-3.7zM9.7 14.9V8.7l6 3.1-6 3.1z" />
+              </svg></a>
+          </div>
+        </div>
+        <div>
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="branches.html">Our Branches</a></li>
+            <li><a href="service-times.html">Service Times</a></li>
+            <li><a href="live.html">Watch Live</a></li>
+            <li><a href="sermons.html">Sermons</a></li>
+            <li><a href="events.html">Events</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="blog.html">News & Blog</a></li>
+            <li><a href="give.html">Give</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Visit Us</h4>
+          <ul>
+            <li>108 Ahoada East–West Rd,<br>near Eliozu Flyover, Rukpakwulosi,<br>Port Harcourt 500272, Rivers State
+            </li>
+            <li>Sunday Service: 8:30–11:00am</li>
+            <li style="margin-top:6px;"><a href="branches.html" style="color:var(--gold); font-weight:600;">View All Campuses &rarr;</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Living Waters International Christian Center. All rights reserved.</span>
+        <span>Built with faith in Port Harcourt 🇳🇬</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    (async function loadPublicGallery() {
+      if (typeof SUPABASE_URL === 'undefined' || SUPABASE_URL.indexOf('YOUR_SUPABASE') !== -1) {
+        console.warn('[LICC Gallery] Supabase not configured yet.');
+        return;
+      }
+      try {
+        var client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        var result = await client.from('gallery').select('*').order('created_at', { ascending: false }).limit(120);
+        if (result.error) {
+          console.error('[LICC Gallery] Supabase error:', result.error.message, result.error);
+          return;
+        }
+        if (!result.data || result.data.length === 0) {
+          console.info('[LICC Gallery] No gallery rows found yet — showing placeholders.');
+          return;
+        }
+        console.info('[LICC Gallery] Loaded ' + result.data.length + ' photo(s) from Supabase.');
+
+        var grid = document.getElementById('galleryGrid');
+        var note = document.getElementById('galleryFallbackNote');
+        grid.innerHTML = result.data.map(function (g, i) {
+          var tallClass = (i % 5 === 0) ? ' tall' : '';
+          var caption = g.caption ? g.caption.replace(/"/g, '&quot;') : '';
+          return '<div class="gallery-item' + tallClass + '">' +
+            '<img src="' + g.image_url + '" alt="' + caption + '" loading="lazy" decoding="async">' +
+            (caption ? '<div class="gallery-caption">' + caption + '</div>' : '') +
+            '</div>';
+        }).join('');
+        if (note) note.style.display = 'none';
+      } catch (e) {
+        console.error('[LICC Gallery] Unexpected error:', e);
+      }
+    })();
+  </script>
+  <script>
+    (function () {
+      function isLikelyServiceTime() {
+        var now = new Date();
+        var day = now.getDay();
+        var totalMins = now.getHours() * 60 + now.getMinutes();
+        return day === 0 && totalMins >= (8 * 60) && totalMins <= (11 * 60 + 30);
+      }
+      if (isLikelyServiceTime()) {
+        document.querySelectorAll(".nav-live .live-dot").forEach(function (dot) {
+          dot.style.display = "inline-block";
+        });
+      }
+    })();
+  </script>
+
+  <!-- Lightbox Overlay -->
+  <div id="lightbox" class="lightbox-overlay" role="dialog" aria-modal="true" aria-label="Photo viewer" tabindex="-1">
+    <button class="lightbox-close" id="lightboxClose" aria-label="Close lightbox">&times;</button>
+    <button class="lightbox-prev" id="lightboxPrev" aria-label="Previous photo">&#8249;</button>
+    <button class="lightbox-next" id="lightboxNext" aria-label="Next photo">&#8250;</button>
+    <div class="lightbox-img-wrap" id="lightboxImgWrap">
+      <img id="lightboxImg" src="" alt="" draggable="false">
+      <div class="lightbox-spinner" id="lightboxSpinner"></div>
+    </div>
+    <div class="lightbox-caption" id="lightboxCaption"></div>
+    <div class="lightbox-counter" id="lightboxCounter"></div>
+  </div>
+
+  <script>
+    (function () {
+      var overlay  = document.getElementById('lightbox');
+      var img      = document.getElementById('lightboxImg');
+      var caption  = document.getElementById('lightboxCaption');
+      var counter  = document.getElementById('lightboxCounter');
+      var spinner  = document.getElementById('lightboxSpinner');
+      var closeBtn = document.getElementById('lightboxClose');
+      var prevBtn  = document.getElementById('lightboxPrev');
+      var nextBtn  = document.getElementById('lightboxNext');
+
+      var items = [];
+      var currentIndex = 0;
+
+      function indexGallery() {
+        items = [];
+        document.querySelectorAll('#galleryGrid .gallery-item').forEach(function (el) {
+          var imgEl = el.querySelector('img');
+          if (imgEl && imgEl.src) {
+            var capEl = el.querySelector('.gallery-caption');
+            items.push({ el: el, src: imgEl.src, alt: imgEl.alt || '', caption: capEl ? capEl.textContent.trim() : '' });
+          }
+        });
+      }
+
+      function openLightbox(index) {
+        if (items.length === 0) return;
+        currentIndex = ((index % items.length) + items.length) % items.length;
+        showPhoto(currentIndex);
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        overlay.focus();
+        var show = items.length > 1;
+        prevBtn.style.display = show ? '' : 'none';
+        nextBtn.style.display = show ? '' : 'none';
+      }
+
+      function closeLightbox() {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+        img.src = '';
+      }
+
+      function showPhoto(index) {
+        var item = items[index];
+        img.style.opacity = '0';
+        spinner.style.display = 'block';
+        var newImg = new Image();
+        newImg.onload = function () {
+          img.src = item.src;
+          img.alt = item.alt;
+          spinner.style.display = 'none';
+          img.style.opacity = '1';
+        };
+        newImg.src = item.src;
+        caption.textContent = item.caption;
+        caption.style.display = item.caption ? 'block' : 'none';
+        counter.textContent = (index + 1) + ' / ' + items.length;
+      }
+
+      function prevPhoto() { currentIndex = (currentIndex - 1 + items.length) % items.length; showPhoto(currentIndex); }
+      function nextPhoto() { currentIndex = (currentIndex + 1) % items.length; showPhoto(currentIndex); }
+
+      // Delegated click on gallery grid — works for both static and Supabase-injected items
+      document.getElementById('galleryGrid').addEventListener('click', function (e) {
+        var item = e.target.closest('.gallery-item');
+        if (!item) return;
+        indexGallery();
+        var idx = items.findIndex(function (o) { return o.el === item; });
+        if (idx >= 0) openLightbox(idx);
+      });
+
+      closeBtn.addEventListener('click', closeLightbox);
+      prevBtn.addEventListener('click', function (e) { e.stopPropagation(); prevPhoto(); });
+      nextBtn.addEventListener('click', function (e) { e.stopPropagation(); nextPhoto(); });
+
+      // Click backdrop to close
+      overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) closeLightbox();
+      });
+
+      // Keyboard
+      document.addEventListener('keydown', function (e) {
+        if (!overlay.classList.contains('active')) return;
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft')  prevPhoto();
+        if (e.key === 'ArrowRight') nextPhoto();
+      });
+
+      // Touch swipe
+      var touchStartX = 0;
+      overlay.addEventListener('touchstart', function (e) { touchStartX = e.changedTouches[0].clientX; }, { passive: true });
+      overlay.addEventListener('touchend',   function (e) {
+        var dx = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(dx) > 50) { dx < 0 ? nextPhoto() : prevPhoto(); }
+      }, { passive: true });
+    })();
+  </script>
+</body>
+
+</html>

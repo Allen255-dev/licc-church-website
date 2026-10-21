@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Branches &amp; Locations | Living Waters International Christian Center</title>
+  <meta name="description"
+    content="Find an LICC branch or campus near you. Discover Living Waters International Christian Center locations across Port Harcourt, Rivers State, Abuja, Lagos, and online.">
+  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    (function () {
+      var t = localStorage.getItem('licc-theme');
+      if (t === 'dark' || (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <!-- ============ HEADER ============ -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="brand">
+        <img src="logo.png" alt="LICC logo">
+        <span class="brand-text">Living Waters<span>International Christian Center</span></span>
+      </a>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="branches.html" class="active">Branches</a>
+        <a href="service-times.html">Service Times</a>
+        <a href="live.html" class="nav-live"><span class="live-dot" style="display:none;"></span>Live</a>
+        <a href="sermons.html">Sermons</a>
+        <a href="events.html">Events</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="blog.html">News</a>
+        <a href="contact.html">Contact</a>
+        <a href="give.html" class="nav-cta">Give</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle-btn" aria-label="Toggle dark and light mode" title="Switch theme (Dark / Light)">
+          <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <div class="nav-overlay"></div>
+
+  <main id="main">
+
+    <!-- ============ PAGE HERO ============ -->
+    <section class="page-hero">
+      <svg class="hero-arc" viewBox="0 0 1200 400" preserveAspectRatio="none" aria-hidden="true"
+        style="position:absolute;inset:0;opacity:0.4;">
+        <path d="M -50 250 C 250 50, 750 30, 1250 180" stroke="#E8B339" stroke-width="2" fill="none" opacity="0.5" />
+      </svg>
+      <div class="page-hero-inner">
+        <div class="breadcrumb"><a href="index.html">Home</a> / Branches</div>
+        <h1>Find a campus near you.</h1>
+        <p>One spiritual family across multiple cities and fellowships. Whether you gather in person at one of our
+          locations or join through our global online campus, there is a place for you to drink from living water.</p>
+      </div>
+    </section>
+
+    <!-- ============ QUICK STATS / OVERVIEW ============ -->
+    <section style="padding: 30px 0 10px;">
+      <div class="container">
+        <div class="branch-stats-card reveal">
+          <div class="stats-row" style="margin:0;">
+            <div class="stat">
+              <div class="num" id="totalBranchesCount">7</div>
+              <div class="label">Campuses &amp; Centers</div>
+            </div>
+            <div class="stat">
+              <div class="num">1</div>
+              <div class="label">United Family</div>
+            </div>
+            <div class="stat">
+              <div class="num">100%</div>
+              <div class="label">Biblical Fellowship</div>
+            </div>
+            <div class="stat">
+              <div class="num">Global</div>
+              <div class="label">Online Reach</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SEARCH & BRANCHES DIRECTORY ============ -->
+    <section>
+      <div class="container">
+
+        <div class="section-head reveal" style="margin-bottom:28px;">
+          <div class="eyebrow">Campus Directory</div>
+          <h2>Explore our locations</h2>
+          <p style="margin-top:10px;">Filter by region or search by campus name, resident pastor, or address.</p>
+        </div>
+
+        <!-- Controls: Search + Pills -->
+        <div class="branch-controls reveal">
+          <div class="branch-search-wrapper">
+            <svg class="branch-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="branchSearchInput" class="branch-search-input"
+              placeholder="Search branches by city, pastor, or name..." autocomplete="off">
+          </div>
+
+          <div class="filter-pills" id="filterPills">
+            <button class="filter-pill active" data-filter="all">All Campuses</button>
+            <button class="filter-pill" data-filter="hq">Headquarters</button>
+            <button class="filter-pill" data-filter="ph">Port Harcourt</button>
+            <button class="filter-pill" data-filter="rivers">Rivers State</button>
+            <button class="filter-pill" data-filter="regional">Abuja &amp; Lagos</button>
+            <button class="filter-pill" data-filter="online">Online Campus</button>
+          </div>
+        </div>
+
+        <!-- Branches Grid -->
+        <div class="branches-grid" id="branchesGrid">
+
+          <!-- 1. HEADQUARTERS / ELIOZU -->
+          <div class="branch-card is-hq reveal" data-category="hq ph rivers" data-name="Headquarters Cathedral Eliozu Rukpakwulosi" data-pastor="Rev. Francis Kpeke-Johnson Pastor Anne Kpeke-Johnson" data-city="Port Harcourt Rivers State">
+            <div>
+              <div class="branch-card-header">
+                <span class="branch-badge badge-hq">★ Headquarters</span>
+                <h3 class="branch-card-title">Port Harcourt Cathedral</h3>
+                <div class="branch-pastor">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-primary)" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <span>Rev. Francis &amp; Pastor Anne Kpeke-Johnson</span>
+                </div>
+              </div>
+
+              <div class="branch-details">
+                <div class="branch-info-item">
+                  <svg class="branch-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 1 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  <div>
+                    <strong>108 Ahoada East–West Rd</strong><br>
+                    Near Eliozu Flyover, Rukpakwulosi, Port Harcourt 500272, Rivers State
+                  </div>
+                </div>
+
+                <div class="branch-info-item">
+                  <svg class="branch-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 3a2 2 0 0 1-.5 2.1L8 10.1a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c1 .3 2 .6 3 .7a2 2 0 0 1 1.7 2z"></path>
+                  </svg>
+                  <div>
+                    <a href="tel:08102395782" style="color:var(--green-deep); font-weight:600;">08102395782</a> &middot; 
+                    <a href="tel:08033398515" style="color:var(--green-deep); font-weight:600;">08033398515</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="branch-schedule-box">
+                <div class="branch-schedule-title">Weekly Service Schedule</div>
+                <div class="branch-schedule-list">
+                  <div><strong>Sunday Service:</strong> 8:30 – 11:00 am</div>
+                  <div><strong>Thursday Communion:</strong> 5:00 – 6:30 pm</div>
+                  <div><strong>Saturday Prayer (An Hour with Jesus):</strong> 7:00 – 8:00 am</div>
+                  <div><strong>1st Friday Power Night:</strong> 10:00 pm – 5:00 am</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="branch-actions-row">
+              <a href="https://www.google.com/maps?q=Living+Waters+International+Christian+Center,+108+Ahoada+East-West+Rd,+Rukpakwulosi,+Port+Harcourt"
+                target="_blank" rel="noopener" class="btn btn-sm btn-outline">
+                Directions
+              </a>
+              <a href="https://wa.me/2348102395782?text=Hello%20LICC%20Headquarters%2C%20I%20would%20like%20to%20connect%20with%20your%20branch."
+                target="_blank" rel="noopener" class="btn btn-sm btn-whatsapp">
+                WhatsApp
+              </a>
+            </div>
+          </div>
+
+          <!-- 2. CHOBA / UNIPORT CAMPUS -->
+          <div class="branch-card reveal" data-category="ph rivers" data-name="Choba Campus Uniport University of Port Harcourt Youth Center" data-pastor="Pastor David Okon" data-city="Port Harcourt Rivers State Choba">
+            <div>
+              <div class="branch-card-header">
+                <span class="branch-badge badge-campus">Campus Fellowship</span>
+                <h3 class="branch-card-title">Choba / Uniport Campus</h3>
+                <div class="branch-pastor">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-primary)" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <span>Pastor David Okon</span>
+                </div>
+              </div>
+
+              <div class="branch-details">
+                <div class="branch-info-item">
+                  <svg class="branch-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 1 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  <div>
+                    <strong>East–West Road</strong><br>
+                    Beside Uniport Back Gate, Choba, Port Harcourt, Rivers State
+                  </div>
+                </div>
+
+                <div class="branch-info-item">
+                  <svg class="branch-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 3a2 2 0 0 1-.5 2.1L8 10.1a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c1 .3 2 .6 3 .7a2 2 0 0 1 1.7 2z"></path>
+                  </svg>
+                  <div>
+                    <a href="tel:08064512390" style="color:var(--green-deep); font-weight:600;">08064512390</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="branch-schedule-box">
+                <div class="branch-schedule-title">Weekly Gatherings</div>
+                <div class="branch-schedule-list">
+                  <div><strong>Sunday Celebration:</strong> 8:00 – 10:15 am</div>
+                  <div><strong>Tuesday Campus Discipleship:</strong> 5:30 – 7:00 pm</div>
+                  <div><strong>Friday Campus Prayer Surge:</strong> 5:00 – 6:30 pm</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="branch-actions-row">
+              <a href="https://maps.google.com/?q=Choba+East-West+Road+Port+Harcourt" target="_blank" rel="noopener" class="btn btn-sm btn-outline">
+                Directions
+              </a>
+              <a href="https://wa.me/2348064512390?text=Hello%20Pastor%2C%20I%20am%20a%20student%2Fresident%20interested%20in%20LICC%20Choba%20Campus."
+                target="_blank" rel="noopener" class="btn btn-sm btn-whatsapp">
+                WhatsApp
+              </a>
+            </div>
+          </div>
+
+          <!-- 3. PETER ODILI / TRANS-AMADI -->
+          <div class="branch-card reveal" data-category="ph rivers" data-name="Peter Odili Trans-Amadi City Campus" data-pastor="Pastor Samuel Briggs" data-city="Port Harcourt Rivers State Peter Odili">
+            <div>
+              <div class="branch-card-header">
+                <span class="branch-badge badge-campus">City Campus</span>
+                <h3 class="branch-card-title">Peter Odili / Trans-Amadi</h3>
+                <div class="branch-pastor">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-primary)" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <span>Pastor Samuel Briggs</span>
+                </div>
+              </div>
+
+              <div class="branch-details">
+                <div class="branch-info-item">
+                  <svg class="branch-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 1 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  <div>
+                    <strong>Off Peter Odili Road</strong><br>
+                    Trans-Amadi Industrial &amp; Residential Layout, Port Harcourt, Rivers State
+                  </div>
+                </div>
+
+                <div class="branch-info-item">
+                  <svg class="branch-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 3a2 2 0 0 1-.5 2.1L8 10.1a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c1 .3 2 .6 3 .7a2 2 0 0 1 1.7 2z"></path>
+                  </svg>
+                  <div>
+                    <a href="tel:08035128944" style="color:var(--green-deep); font-weight:600;">08035128944</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="branch-schedule-box">
+                <div class="branch-schedule-title">Weekly Gatherings</div>
+                <div class="branch-schedule-list">
+                  <div><strong>Sunday 1st Service:</strong> 7:30 – 9:15 am</div>
+                  <div><strong>Sunday 2nd Service:</strong> 9:30 – 11:30 am</div>
+                  <div><strong>Wednesday Midweek Encounter:</strong> 5:30 – 7:00 pm</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="branch-actions-row">
+              <a href="https://maps.google.com/?q=Peter+Odili+Road+Port+Harcourt" target="_blank" rel="noopener" class="btn btn-sm btn-outline">
+                Directions
+              </a>
+              <a href="https://wa.me/2348035128944?text=Hello%20Pastor%20Samuel%2C%20I%20would%20love%20to%20attend%20LICC%20Peter%20Odili%20branch."
+                target="_blank" rel="noopener" class="btn btn-sm btn-whatsapp">
+                WhatsApp
+              </a>
+            </div>
+          </div>
+
+          <!-- 4. OYIGBO / ABA ROAD -->
+          <div class="branch-card reveal" data-category="rivers" data-name="Oyigbo Aba Road Regional Center" data-pastor="Pastor Emmanuel Ndubuisi" data-city="Oyigbo Rivers State Aba Road">
+            <div>
+              <div class="branch-card-header">
+                <span class="branch-badge badge-regional">Rivers East</span>
+                <h3 class="branch-card-title">Oyigbo / Aba Road Branch</h3>
+                <div class="branch-pastor">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-primary)" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <span>Pastor Emmanuel Ndubuisi</span>
+                </div>
+              </div>
+
+              <div class="branch-details">
+                <div class="branch-info-item">
+                  <svg class="branch-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 1 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  <div>
+                    <strong>Old Aba Road</strong><br>
+                    Express Junction, Oyigbo LGA, Rivers State
+                  </div>
+                </div>
+
+                <div class="branch-info-item">
+                  <svg class="branch-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 3a2 2 0 0 1-.5 2.1L8 10.1a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c1 .3 2 .6 3 .7a2 2 0 0 1 1.7 2z"></path>
+                  </svg>
+                  <div>
+                    <a href="tel:08134789021" style="color:var(--green-deep); font-weight:600;">08134789021</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="branch-schedule-box">
+                <div class="branch-schedule-title">Weekly Gatherings</div>
+                <div class="branch-schedule-list">
+                  <div><strong>Sunday Celebration:</strong> 8:00 – 10:30 am</div>
+                  <div><strong>Wednesday Word &amp; Prayer:</strong> 5:30 – 7:00 pm</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="branch-actions-row">
+              <a href="https://maps.google.com/?q=Oyigbo+Rivers+State" target="_blank" rel="noopener" class="btn btn-sm btn-outline">
+                Directions
+              </a>
+              <a href="https://wa.me/2348134789021?text=Hello%20Pastor%20Emmanuel%2C%20inquiry%20about%20LICC%20Oyigbo%20Branch."
+                target="_blank" rel="noopener" class="btn btn-sm btn-whatsapp">
+                WhatsApp
+              </a>
+            </div>
+          </div>
+
+          <!-- 5. ABUJA CENTER -->
+          <div class="branch-card reveal" data-category="regional" data-name="Abuja FCT Center Jabi Utako" data-pastor="Pastor Michael Adeleke" data-city="Abuja FCT Federal Capital Territory">
+            <div>
+              <div class="branch-card-header">
+                <span class="branch-badge badge-regional">Federal Capital</span>
+                <h3 class="branch-card-title">Abuja Worship Center</h3>
+                <div class="branch-pastor">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-primary)" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <span>Pastor Michael Adeleke</span>
+                </div>
+              </div>
+
+              <div class="branch-details">
+                <div class="branch-info-item">
+                  <svg class="branch-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 1 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  <div>
+                    <strong>Plot 412, Cadastral Zone B04</strong><br>
+                    Jabi / Utako District, Abuja FCT
+                  </div>
+                </div>
+
+                <div class="branch-info-item">
+                  <svg class="branch-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 3a2 2 0 0 1-.5 2.1L8 10.1a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c1 .3 2 .6 3 .7a2 2 0 0 1 1.7 2z"></path>
+                  </svg>
+                  <div>
+                    <a href="tel:08023456781" style="color:var(--green-deep); font-weight:600;">08023456781</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="branch-schedule-box">
+                <div class="branch-schedule-title">Weekly Gatherings</div>
+                <div class="branch-schedule-list">
+                  <div><strong>Sunday Celebration:</strong> 9:00 – 11:15 am</div>
+                  <div><strong>Thursday Faith &amp; Prayer Clinic:</strong> 6:00 – 7:30 pm</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="branch-actions-row">
+              <a href="https://maps.google.com/?q=Jabi+Abuja" target="_blank" rel="noopener" class="btn btn-sm btn-outline">
+                Directions
+              </a>
+              <a href="https://wa.me/2348023456781?text=Hello%20Pastor%20Michael%2C%20inquiry%20about%20LICC%20Abuja%20Center."
+                target="_blank" rel="noopener" class="btn btn-sm btn-whatsapp">
+                WhatsApp
+              </a>
+            </div>
+          </div>
+
+          <!-- 6. LAGOS CENTER -->
+          <div class="branch-card reveal" data-category="regional" data-name="Lagos Outreach Center Lekki Victoria Island" data-pastor="Pastor Joy Adebayo" data-city="Lagos State Lekki">
+            <div>
+              <div class="branch-card-header">
+                <span class="branch-badge badge-regional">South-West</span>
+                <h3 class="branch-card-title">Lagos Worship Center</h3>
+                <div class="branch-pastor">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-primary)" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <span>Pastor Joy Adebayo</span>
+                </div>
+              </div>
+
+              <div class="branch-details">
+                <div class="branch-info-item">
+                  <svg class="branch-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 1 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  <div>
+                    <strong>Admiralty Way</strong><br>
+                    Lekki Phase 1, Lagos State
+                  </div>
+                </div>
+
+                <div class="branch-info-item">
+                  <svg class="branch-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 3a2 2 0 0 1-.5 2.1L8 10.1a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c1 .3 2 .6 3 .7a2 2 0 0 1 1.7 2z"></path>
+                  </svg>
+                  <div>
+                    <a href="tel:08098765432" style="color:var(--green-deep); font-weight:600;">08098765432</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="branch-schedule-box">
+                <div class="branch-schedule-title">Weekly Gatherings</div>
+                <div class="branch-schedule-list">
+                  <div><strong>Sunday Worship:</strong> 8:30 – 10:45 am</div>
+                  <div><strong>Wednesday Word &amp; Worship:</strong> 6:00 – 7:30 pm</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="branch-actions-row">
+              <a href="https://maps.google.com/?q=Lekki+Phase+1+Lagos" target="_blank" rel="noopener" class="btn btn-sm btn-outline">
+                Directions
+              </a>
+              <a href="https://wa.me/2348098765432?text=Hello%20Pastor%20Joy%2C%20inquiry%20about%20LICC%20Lagos%20Center."
+                target="_blank" rel="noopener" class="btn btn-sm btn-whatsapp">
+                WhatsApp
+              </a>
+            </div>
+          </div>
+
+          <!-- 7. ONLINE CAMPUS -->
+          <div class="branch-card reveal" data-category="online" data-name="Global Online Campus E-Church Live Stream Virtual" data-pastor="Pastor Gabriel Peters" data-city="Worldwide Online Virtual Live Stream">
+            <div>
+              <div class="branch-card-header">
+                <span class="branch-badge badge-online">🌐 Global E-Church</span>
+                <h3 class="branch-card-title">LICC Global Online Campus</h3>
+                <div class="branch-pastor">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-primary)" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <span>Pastor Gabriel Peters (Online Campus Lead)</span>
+                </div>
+              </div>
+
+              <div class="branch-details">
+                <div class="branch-info-item">
+                  <svg class="branch-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                  </svg>
+                  <div>
+                    <strong>Streaming Worldwide</strong><br>
+                    Live on YouTube TV, Facebook &amp; Mixlr Audio Stream
+                  </div>
+                </div>
+
+                <div class="branch-info-item">
+                  <svg class="branch-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 3a2 2 0 0 1-.5 2.1L8 10.1a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c1 .3 2 .6 3 .7a2 2 0 0 1 1.7 2z"></path>
+                  </svg>
+                  <div>
+                    <a href="tel:08102395782" style="color:var(--green-deep); font-weight:600;">+234 810 239 5782</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="branch-schedule-box">
+                <div class="branch-schedule-title">Global Broadcast Times</div>
+                <div class="branch-schedule-list">
+                  <div><strong>Sunday Live Stream:</strong> 8:30 am WAT (GMT+1)</div>
+                  <div><strong>Thursday Communion Stream:</strong> 5:00 pm WAT (GMT+1)</div>
+                  <div><strong>Virtual Cell Fellowships:</strong> Midweek via Zoom</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="branch-actions-row">
+              <a href="live.html" class="btn btn-sm btn-primary">
+                Watch Live Stream
+              </a>
+              <a href="https://wa.me/2348102395782?text=Hello%2C%20I%20would%20like%20to%20join%20the%20LICC%20Online%20Campus%20community."
+                target="_blank" rel="noopener" class="btn btn-sm btn-whatsapp">
+                Join Community
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- No Results Fallback -->
+        <div id="noBranchesFound" style="display:none; text-align:center; padding: 60px 20px;">
+          <div style="font-size: 2.2rem; margin-bottom: 12px;">🔍</div>
+          <h3>No matching campuses found</h3>
+          <p style="margin-top:6px;">Try adjusting your search terms or clearing the filter.</p>
+          <button id="resetFiltersBtn" class="btn btn-sm btn-outline" style="margin-top:16px;">View All Branches</button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============ PLANT A BRANCH / CELL CENTER CTA ============ -->
+    <section class="section-alt">
+      <div class="container">
+        <div class="cta-banner reveal">
+          <div>
+            <div class="eyebrow" style="color:var(--gold);">Church Growth &amp; Fellowship</div>
+            <h2 style="color:white; margin-top:12px;">Don't see a branch in your city?</h2>
+            <p style="color:rgba(255,255,255,0.85); margin-top:14px; max-width:580px;">
+              Living Waters is continuously expanding. If you're hungry for authentic Christian community, you can host
+              or join an LICC Home Cell, or speak with our pastoral mission team about planting a branch in your area.
+            </p>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <a href="contact.html?reason=Plant+a+Branch" class="btn btn-gold">Connect with Missions Team</a>
+            <a href="tel:08102395782" class="btn btn-outline-light">Call Church Office</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ PLAN A VISIT MODAL ============ -->
+  <div class="modal-overlay" id="visitModalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-content">
+      <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close dialog">&times;</button>
+      <div class="eyebrow">You're Welcome Here</div>
+      <h3 id="modalTitle" style="margin-top:8px;">Plan Your Visit</h3>
+      <p style="font-size:0.92rem; margin-top:6px; margin-bottom:20px;">
+        Let us know you're coming so our welcome team can save a seat and prepare a warm reception for you!
+      </p>
+
+      <form id="planVisitForm">
+        <div class="form-field" style="margin-bottom:14px;">
+          <label style="display:block; font-size:0.84rem; font-weight:600; margin-bottom:6px;">Selected Campus</label>
+          <input type="text" id="modalBranchField" readonly
+            style="width:100%; padding:11px 14px; border:1.5px solid var(--line); border-radius:8px; background:var(--bg-warm-2); font-weight:600;">
+        </div>
+
+        <div class="form-row-2" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+          <div>
+            <label style="display:block; font-size:0.84rem; font-weight:600; margin-bottom:6px;">Your Name *</label>
+            <input type="text" id="visitorName" required
+              style="width:100%; padding:11px 14px; border:1.5px solid var(--line); border-radius:8px;">
+          </div>
+          <div>
+            <label style="display:block; font-size:0.84rem; font-weight:600; margin-bottom:6px;">Phone Number *</label>
+            <input type="tel" id="visitorPhone" required
+              style="width:100%; padding:11px 14px; border:1.5px solid var(--line); border-radius:8px;">
+          </div>
+        </div>
+
+        <div class="form-field" style="margin-bottom:14px;">
+          <label style="display:block; font-size:0.84rem; font-weight:600; margin-bottom:6px;">Email Address</label>
+          <input type="email" id="visitorEmail"
+            style="width:100%; padding:11px 14px; border:1.5px solid var(--line); border-radius:8px;">
+        </div>
+
+        <div class="form-field" style="margin-bottom:18px;">
+          <label style="display:block; font-size:0.84rem; font-weight:600; margin-bottom:6px;">Which Sunday are you planning to visit?</label>
+          <input type="date" id="visitorDate"
+            style="width:100%; padding:11px 14px; border:1.5px solid var(--line); border-radius:8px;">
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" style="width:100%; justify-content:center;">
+          Submit &amp; Connect with Team
+        </button>
+      </form>
+
+      <div id="modalSuccess" style="display:none; text-align:center; padding:20px 0;">
+        <div style="font-size:2.4rem; color:var(--green-primary); margin-bottom:10px;">✓</div>
+        <h3>We can't wait to see you!</h3>
+        <p style="margin-top:8px; font-size:0.95rem;">
+          Thank you for letting us know. Our hospitality team will be delighted to welcome you at the entrance.
+        </p>
+        <button class="btn btn-sm btn-outline" id="modalFinishBtn" style="margin-top:18px;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">
+            <img src="logo.png" alt="LICC logo">
+            <span class="footer-brand-text">Living Waters ICC</span>
+          </div>
+          <p style="max-width:280px; font-size:0.92rem;">A church family devoted to worship, the Word, and walking with
+            one another through life across Port Harcourt and beyond.</p>
+          <div class="social-row" style="margin-top:22px;">
+            <a href="https://www.facebook.com/theliccglobal" target="_blank" rel="noopener" aria-label="Facebook"><svg
+                viewBox="0 0 24 24" fill="white">
+                <path
+                  d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z" />
+              </svg></a>
+            <a href="https://www.youtube.com/@liccglobaltv" target="_blank" rel="noopener" aria-label="YouTube"><svg
+                viewBox="0 0 24 24" fill="white">
+                <path
+                  d="M22.5 7.2s-.2-1.6-.9-2.3c-.8-.9-1.7-.9-2.2-1C16 3.6 12 3.6 12 3.6h0s-4 0-7.4.3c-.5.1-1.4.1-2.2 1-.7.7-.9 2.3-.9 2.3S1.2 9 1.2 10.9v1.9c0 1.9.3 3.7.3 3.7s.2 1.6.9 2.3c.8.9 1.9.9 2.4 1 1.7.2 7.2.3 7.2.3s4 0 7.4-.3c.5-.1 1.4-.1 2.2-1 .7-.7.9-2.3.9-2.3s.3-1.9.3-3.7v-1.9c0-1.9-.3-3.7-.3-3.7zM9.7 14.9V8.7l6 3.1-6 3.1z" />
+              </svg></a>
+          </div>
+        </div>
+        <div>
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="branches.html">Our Branches</a></li>
+            <li><a href="service-times.html">Service Times</a></li>
+            <li><a href="live.html">Watch Live</a></li>
+            <li><a href="sermons.html">Sermons</a></li>
+            <li><a href="events.html">Events</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="blog.html">News &amp; Blog</a></li>
+            <li><a href="give.html">Give</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Headquarters</h4>
+          <ul>
+            <li>108 Ahoada East–West Rd,<br>near Eliozu Flyover, Rukpakwulosi,<br>Port Harcourt 500272, Rivers State
+            </li>
+            <li>Sunday Service: 8:30–11:00am</li>
+            <li style="margin-top:8px;"><a href="branches.html" style="color:var(--gold); font-weight:600;">View All Branches &rarr;</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Living Waters International Christian Center. All rights reserved.</span>
+        <span>Built with faith in Port Harcourt 🇳🇬</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+  <script src="supabase-config.js"></script>
+
+  <!-- ============ BRANCHES FILTER & INTERACTION SCRIPT ============ -->
+  <script>
+    (function () {
+      // 1. Service time dot
+      function isLikelyServiceTime() {
+        var now = new Date();
+        var day = now.getDay();
+        var totalMins = now.getHours() * 60 + now.getMinutes();
+        return day === 0 && totalMins >= (8 * 60) && totalMins <= (11 * 60 + 30);
+      }
+      if (isLikelyServiceTime()) {
+        document.querySelectorAll('.nav-live .live-dot').forEach(function (dot) {
+          dot.style.display = 'inline-block';
+        });
+      }
+
+      // 2. Search & Filter Logic
+      var searchInput = document.getElementById('branchSearchInput');
+      var filterPills = document.querySelectorAll('.filter-pill');
+      var branchCards = document.querySelectorAll('.branch-card');
+      var noFound = document.getElementById('noBranchesFound');
+      var resetBtn = document.getElementById('resetFiltersBtn');
+      var currentCategory = 'all';
+
+      function filterBranches() {
+        var term = (searchInput.value || '').trim().toLowerCase();
+        var visibleCount = 0;
+
+        branchCards.forEach(function (card) {
+          var categories = (card.getAttribute('data-category') || '').toLowerCase().split(' ');
+          var name = (card.getAttribute('data-name') || '').toLowerCase();
+          var pastor = (card.getAttribute('data-pastor') || '').toLowerCase();
+          var city = (card.getAttribute('data-city') || '').toLowerCase();
+          var textContent = card.innerText.toLowerCase();
+
+          var matchesCategory = (currentCategory === 'all') || categories.indexOf(currentCategory) !== -1;
+          var matchesSearch = !term ||
+            name.indexOf(term) !== -1 ||
+            pastor.indexOf(term) !== -1 ||
+            city.indexOf(term) !== -1 ||
+            textContent.indexOf(term) !== -1;
+
+          if (matchesCategory && matchesSearch) {
+            card.style.display = 'flex';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        if (noFound) {
+          noFound.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+      }
+
+      searchInput.addEventListener('input', filterBranches);
+
+      filterPills.forEach(function (pill) {
+        pill.addEventListener('click', function () {
+          filterPills.forEach(function (p) { p.classList.remove('active'); });
+          pill.classList.add('active');
+          currentCategory = pill.getAttribute('data-filter');
+          filterBranches();
+        });
+      });
+
+      if (resetBtn) {
+        resetBtn.addEventListener('click', function () {
+          searchInput.value = '';
+          currentCategory = 'all';
+          filterPills.forEach(function (p) { p.classList.remove('active'); });
+          document.querySelector('.filter-pill[data-filter="all"]').classList.add('active');
+          filterBranches();
+        });
+      }
+
+      // 3. Plan a Visit Modal
+      var modal = document.getElementById('visitModalOverlay');
+      var modalClose = document.getElementById('modalCloseBtn');
+      var modalFinish = document.getElementById('modalFinishBtn');
+      var branchField = document.getElementById('modalBranchField');
+      var visitForm = document.getElementById('planVisitForm');
+      var modalSuccess = document.getElementById('modalSuccess');
+
+      function openModal(branchName) {
+        branchField.value = branchName || 'Living Waters International Christian Center';
+        visitForm.style.display = 'block';
+        modalSuccess.style.display = 'none';
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeModal() {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      document.querySelectorAll('.plan-visit-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          openModal(btn.getAttribute('data-branch'));
+        });
+      });
+
+      modalClose.addEventListener('click', closeModal);
+      if (modalFinish) modalFinish.addEventListener('click', closeModal);
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeModal();
+      });
+
+      visitForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var name = document.getElementById('visitorName').value;
+        var phone = document.getElementById('visitorPhone').value;
+        var email = document.getElementById('visitorEmail').value;
+        var date = document.getElementById('visitorDate').value;
+        var branch = branchField.value;
+
+        // Try to save to Supabase messages if available
+        if (typeof supabaseClient !== 'undefined' && typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL.indexOf('YOUR_SUPABASE') === -1) {
+          try {
+            await supabaseClient.from('messages').insert({
+              name: name,
+              phone: phone,
+              email: email,
+              reason: 'Plan a Visit - ' + branch,
+              message: 'Planned visit date: ' + (date || 'Not specified') + ' to campus: ' + branch
+            });
+          } catch (err) {
+            console.warn('Note saving visit to DB:', err);
+          }
+        }
+
+        visitForm.style.display = 'none';
+        modalSuccess.style.display = 'block';
+      });
+
+      // 4. Try loading dynamic branches from Supabase if table exists
+      (async function loadSupabaseBranches() {
+        if (typeof supabaseClient === 'undefined' || typeof SUPABASE_URL === 'undefined' || SUPABASE_URL.indexOf('YOUR_SUPABASE') !== -1) {
+          return;
+        }
+        try {
+          var res = await supabaseClient.from('branches').select('*').order('display_order', { ascending: true });
+          if (res.data && res.data.length > 0) {
+            console.info('[LICC Branches] Loaded ' + res.data.length + ' custom branch(es) from Supabase.');
+            var grid = document.getElementById('branchesGrid');
+            var statCount = document.getElementById('totalBranchesCount');
+            if (statCount) statCount.textContent = res.data.length;
+
+            grid.innerHTML = res.data.map(function (b) {
+              var isHq = (b.tag && b.tag.toLowerCase().indexOf('hq') !== -1) || (b.tag && b.tag.toLowerCase().indexOf('headquarters') !== -1);
+              var badgeClass = isHq ? 'badge-hq' : (b.tag && b.tag.toLowerCase().indexOf('online') !== -1 ? 'badge-online' : 'badge-campus');
+              var tagText = b.tag || 'Campus';
+              var mapUrl = b.google_maps_url || ('https://maps.google.com/?q=' + encodeURIComponent(b.name + ' ' + b.address));
+              var waUrl = b.whatsapp ? ('https://wa.me/' + b.whatsapp.replace(/[^0-9]/g, '')) : '';
+
+              return '<div class="branch-card ' + (isHq ? 'is-hq' : '') + ' reveal is-visible" data-category="' + (isHq ? 'hq ' : '') + (b.city ? b.city.toLowerCase() : '') + '" data-name="' + (b.name || '') + '" data-pastor="' + (b.pastor || '') + '" data-city="' + (b.city || '') + ' ' + (b.state || '') + '">' +
+                '<div>' +
+                  '<div class="branch-card-header">' +
+                    '<span class="branch-badge ' + badgeClass + '">' + tagText + '</span>' +
+                    '<h3 class="branch-card-title">' + b.name + '</h3>' +
+                    (b.pastor ? '<div class="branch-pastor"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-primary)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span>' + b.pastor + '</span></div>' : '') +
+                  '</div>' +
+                  '<div class="branch-details">' +
+                    '<div class="branch-info-item"><svg class="branch-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 1 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg><div>' + b.address + (b.city ? '<br>' + b.city + (b.state ? ', ' + b.state : '') : '') + '</div></div>' +
+                    (b.phone ? '<div class="branch-info-item"><svg class="branch-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 3a2 2 0 0 1-.5 2.1L8 10.1a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c1 .3 2 .6 3 .7a2 2 0 0 1 1.7 2z"></path></svg><div><a href="tel:' + b.phone + '" style="color:var(--green-deep); font-weight:600;">' + b.phone + '</a></div></div>' : '') +
+                  '</div>' +
+                  (b.service_times ? '<div class="branch-schedule-box"><div class="branch-schedule-title">Weekly Schedule</div><div class="branch-schedule-list"><div>' + b.service_times + '</div></div></div>' : '') +
+                '</div>' +
+                '<div class="branch-actions-row">' +
+                  '<a href="' + mapUrl + '" target="_blank" rel="noopener" class="btn btn-sm btn-outline">Directions</a>' +
+                  (waUrl ? '<a href="' + waUrl + '" target="_blank" rel="noopener" class="btn btn-sm btn-whatsapp">WhatsApp</a>' : '') +
+                '</div>' +
+              '</div>';
+            }).join('');
+
+            // re-cache branch cards
+            branchCards = document.querySelectorAll('.branch-card');
+          }
+        } catch (e) {
+          console.info('[LICC Branches] Using built-in campus directory.');
+        }
+      })();
+
+    })();
+  </script>
+</body>
+
+</html>

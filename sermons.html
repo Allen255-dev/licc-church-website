@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sermons | Living Waters International Christian Center</title>
+  <meta name="description"
+    content="Watch and listen to recent sermons from Living Waters International Christian Center, Port Harcourt.">
+  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    (function () {
+      var t = localStorage.getItem('licc-theme');
+      if (t === 'dark' || (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    .sermon-card {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sermon-thumb {
+      aspect-ratio: 16/9;
+      background: var(--bg-warm-2);
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sermon-thumb .play-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(26, 155, 82, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sermon-thumb .play-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
+
+    .sermon-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: var(--bg-warm-2);
+      color: var(--green-deep);
+      padding: 5px 12px;
+      border-radius: 100px;
+      margin-bottom: 12px;
+    }
+
+    .sermon-meta {
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      margin-top: 6px;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 44px;
+    }
+
+    .filter-chip {
+      padding: 9px 20px;
+      border-radius: 100px;
+      border: 1.5px solid var(--line);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--ink-soft);
+      cursor: pointer;
+      background: white;
+    }
+
+    .filter-chip.active {
+      background: var(--green-primary);
+      color: white;
+      border-color: var(--green-primary);
+    }
+  </style>
+</head>
+
+<body>
+
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="brand">
+        <img src="logo.png" alt="LICC logo">
+        <span class="brand-text">Living Waters<span>International Christian Center</span></span>
+      </a>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="branches.html">Branches</a>
+        <a href="service-times.html">Service Times</a>
+        <a href="live.html" class="nav-live"><span class="live-dot" style="display:none;"></span>Live</a>
+        <a href="sermons.html" class="active">Sermons</a>
+        <a href="events.html">Events</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="blog.html">News</a>
+        <a href="contact.html">Contact</a>
+        <a href="give.html" class="nav-cta">Give</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle-btn" aria-label="Toggle dark and light mode" title="Switch theme (Dark / Light)">
+          <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <div class="nav-overlay"></div>
+
+  <main id="main">
+
+    <section class="page-hero">
+      <svg class="hero-arc" viewBox="0 0 1200 400" preserveAspectRatio="none" aria-hidden="true"
+        style="position:absolute;inset:0;opacity:0.4;">
+        <path d="M -50 250 C 250 50, 750 30, 1250 180" stroke="#E8B339" stroke-width="2" fill="none" opacity="0.5" />
+      </svg>
+      <div class="page-hero-inner">
+        <div class="breadcrumb"><a href="index.html">Home</a> / Sermons</div>
+        <h1>Words to carry with you.</h1>
+        <p>Missed a Sunday, or want to revisit a message? Catch up on recent sermons from our pastors below.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="filter-row reveal">
+          <button class="filter-chip active">All</button>
+          <button class="filter-chip">Sunday Service</button>
+          <button class="filter-chip">Bible Study</button>
+          <button class="filter-chip">Special Events</button>
+        </div>
+
+        <div class="grid-3" id="sermonGrid">
+          <div class="sermon-card card reveal">
+            <div class="sermon-thumb">
+              <div class="play-btn"><svg viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg></div>
+            </div>
+            <span class="sermon-tag">Sunday Service</span>
+            <h3 style="font-size:1.1rem;">Living Water That Never Runs Dry</h3>
+            <p class="sermon-meta">Rev. Anne Francis Kpeke-Johnson &middot; Sample placeholder</p>
+          </div>
+          <div class="sermon-card card reveal">
+            <div class="sermon-thumb">
+              <div class="play-btn"><svg viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg></div>
+            </div>
+            <span class="sermon-tag">Sunday Service</span>
+            <h3 style="font-size:1.1rem;">Faith That Moves Mountains</h3>
+            <p class="sermon-meta">Rev. Francis Kpeke-Johnson &middot; Sample placeholder</p>
+          </div>
+          <div class="sermon-card card reveal">
+            <div class="sermon-thumb">
+              <div class="play-btn"><svg viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg></div>
+            </div>
+            <span class="sermon-tag">Bible Study</span>
+            <h3 style="font-size:1.1rem;">Walking in the Spirit</h3>
+            <p class="sermon-meta">Rev. Anne Francis Kpeke-Johnson &middot; Sample placeholder</p>
+          </div>
+        </div>
+
+        <p style="margin-top:30px; font-size:0.88rem; text-align:center;" id="sermonFallbackNote"><em>Note to church
+            admin: these are sample placeholders. Add real sermons through the <a href="admin.html">admin panel</a> and
+            they'll automatically appear here.</em></p>
+      </div>
+    </section>
+
+    <section class="section-deep" style="padding:60px 0;">
+      <div class="container" style="text-align:center;">
+        <h2 style="color:white;">Subscribe for new sermons</h2>
+        <p style="max-width:480px; margin:14px auto 28px;">Follow us on YouTube and social media so you never miss a
+          message.</p>
+        <a href="https://www.youtube.com/@liccglobaltv" target="_blank" rel="noopener" class="btn btn-gold">Visit Our YouTube Channel</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">
+            <img src="logo.png" alt="LICC logo">
+            <span class="footer-brand-text">Living Waters ICC</span>
+          </div>
+          <p style="max-width:280px; font-size:0.92rem;">A church family in Port Harcourt devoted to worship, the Word,
+            and walking with one another through life.</p>
+          <div class="social-row" style="margin-top:22px;">
+            <a href="https://www.facebook.com/theliccglobal" target="_blank" rel="noopener" aria-label="Facebook"><svg
+                viewBox="0 0 24 24" fill="white">
+                <path
+                  d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z" />
+              </svg></a>
+            <a href="https://www.youtube.com/@liccglobaltv" target="_blank" rel="noopener" aria-label="YouTube"><svg
+                viewBox="0 0 24 24" fill="white">
+                <path
+                  d="M22.5 7.2s-.2-1.6-.9-2.3c-.8-.9-1.7-.9-2.2-1C16 3.6 12 3.6 12 3.6h0s-4 0-7.4.3c-.5.1-1.4.1-2.2 1-.7.7-.9 2.3-.9 2.3S1.2 9 1.2 10.9v1.9c0 1.9.3 3.7.3 3.7s.2 1.6.9 2.3c.8.9 1.9.9 2.4 1 1.7.2 7.2.3 7.2.3s4 0 7.4-.3c.5-.1 1.4-.1 2.2-1 .7-.7.9-2.3.9-2.3s.3-1.9.3-3.7v-1.9c0-1.9-.3-3.7-.3-3.7zM9.7 14.9V8.7l6 3.1-6 3.1z" />
+              </svg></a>
+          </div>
+        </div>
+        <div>
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="branches.html">Our Branches</a></li>
+            <li><a href="service-times.html">Service Times</a></li>
+            <li><a href="live.html">Watch Live</a></li>
+            <li><a href="sermons.html">Sermons</a></li>
+            <li><a href="events.html">Events</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="blog.html">News & Blog</a></li>
+            <li><a href="give.html">Give</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Visit Us</h4>
+          <ul>
+            <li>108 Ahoada East–West Rd,<br>near Eliozu Flyover, Rukpakwulosi,<br>Port Harcourt 500272, Rivers State
+            </li>
+            <li>Sunday Service: 8:30–11:00am</li>
+            <li style="margin-top:6px;"><a href="branches.html" style="color:var(--gold); font-weight:600;">View All Campuses &rarr;</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Living Waters International Christian Center. All rights reserved.</span>
+        <span>Built with faith in Port Harcourt 🇳🇬</span>
+      </div>
+    </div>
+  </footer>
+  <script src="main.js"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    // ---------- Dynamic sermon loading from Supabase ----------
+    function getYouTubeId(url) {
+      if (!url) return null;
+      var match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+      return match ? match[1] : null;
+    }
+
+    function sermonCardHtml(s) {
+      var isUpload = s.youtube_url && s.youtube_url.indexOf('supabase') !== -1;
+      var dateStr = '';
+      if (s.sermon_date) {
+        var d = new Date(s.sermon_date + 'T00:00:00');
+        dateStr = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      }
+
+      if (isUpload) {
+        return '<div class="sermon-card card reveal">' +
+          '<div class="sermon-thumb" style="background:#000;">' +
+          '<video src="' + s.youtube_url + '" controls preload="metadata" style="width:100%;height:100%;object-fit:contain;background:#000;"></video>' +
+          '</div>' +
+          '<span class="sermon-tag">' + (s.category || 'Sunday Service') + '</span>' +
+          '<h3 style="font-size:1.1rem;">' + s.title + '</h3>' +
+          '<p class="sermon-meta">' + s.preacher + (dateStr ? ' &middot; ' + dateStr : '') + '</p>' +
+          '</div>';
+      }
+
+      var ytId = getYouTubeId(s.youtube_url);
+      var thumb = ytId
+        ? '<img src="https://img.youtube.com/vi/' + ytId + '/hqdefault.jpg" alt="" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">'
+        : '';
+      return '<a class="sermon-card card reveal" href="' + (s.youtube_url || '#') + '" target="_blank" rel="noopener" style="text-decoration:none;">' +
+        '<div class="sermon-thumb">' + thumb +
+        '<div class="play-btn" style="position:relative;z-index:2;"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>' +
+        '</div>' +
+        '<span class="sermon-tag">' + (s.category || 'Sunday Service') + '</span>' +
+        '<h3 style="font-size:1.1rem;">' + s.title + '</h3>' +
+        '<p class="sermon-meta">' + s.preacher + (dateStr ? ' &middot; ' + dateStr : '') + '</p>' +
+        '</a>';
+    }
+
+    var allSermonsData = [];
+
+    function renderSermons(category) {
+      var grid = document.getElementById('sermonGrid');
+      var note = document.getElementById('sermonFallbackNote');
+      if (!grid) return;
+
+      var filtered = allSermonsData;
+      if (category && category !== 'All') {
+        filtered = allSermonsData.filter(function (s) {
+          return (s.category || '').toLowerCase().trim() === category.toLowerCase().trim();
+        });
+      }
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1 / -1; text-align:center; padding: 48px 20px; color:var(--ink-soft);">' +
+          '<p style="font-size:1.1rem; font-weight:600; margin-bottom:8px;">No sermons in this category yet.</p>' +
+          '<p style="font-size:0.9rem;">Check back soon or select "All" to browse all messages.</p>' +
+          '</div>';
+        return;
+      }
+
+      grid.innerHTML = filtered.map(sermonCardHtml).join('');
+      grid.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('is-visible'); });
+      if (note && allSermonsData.length > 0) note.style.display = 'none';
+    }
+
+    (async function loadPublicSermons() {
+      // Default initial placeholder data if Supabase has not yet loaded
+      allSermonsData = [
+        {
+          title: 'Living Water That Never Runs Dry',
+          preacher: 'Rev. Anne Francis Kpeke-Johnson',
+          category: 'Sunday Service',
+          youtube_url: 'https://www.youtube.com/@liccglobaltv/streams'
+        },
+        {
+          title: 'Faith That Moves Mountains',
+          preacher: 'Rev. Francis Kpeke-Johnson',
+          category: 'Sunday Service',
+          youtube_url: 'https://www.youtube.com/@liccglobaltv/streams'
+        },
+        {
+          title: 'Walking in the Spirit',
+          preacher: 'Rev. Anne Francis Kpeke-Johnson',
+          category: 'Bible Study',
+          youtube_url: 'https://www.youtube.com/@liccglobaltv/streams'
+        }
+      ];
+
+      if (typeof SUPABASE_URL === 'undefined' || SUPABASE_URL.indexOf('YOUR_SUPABASE') !== -1) {
+        console.warn('[LICC Sermons] Supabase not configured yet.');
+        renderSermons('All');
+        return;
+      }
+      try {
+        var client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        var result = await client.from('sermons').select('*').order('sermon_date', { ascending: false }).limit(24);
+        if (result.error) {
+          console.error('[LICC Sermons] Supabase error:', result.error.message, result.error);
+          renderSermons('All');
+          return;
+        }
+        if (result.data && result.data.length > 0) {
+          allSermonsData = result.data;
+          console.info('[LICC Sermons] Loaded ' + result.data.length + ' sermon(s) from Supabase.');
+        }
+        renderSermons('All');
+      } catch (e) {
+        console.error('[LICC Sermons] Unexpected error:', e);
+        renderSermons('All');
+      }
+    })();
+  </script>
+  <script>
+    document.querySelectorAll('.filter-chip').forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        document.querySelectorAll('.filter-chip').forEach(function (c) { c.classList.remove('active'); });
+        chip.classList.add('active');
+        var cat = chip.textContent.trim();
+        renderSermons(cat);
+      });
+    });
+  </script>
+  <script>
+    (function () {
+      function isLikelyServiceTime() {
+        var now = new Date();
+        var day = now.getDay();
+        var totalMins = now.getHours() * 60 + now.getMinutes();
+        return day === 0 && totalMins >= (8 * 60) && totalMins <= (11 * 60 + 30);
+      }
+      if (isLikelyServiceTime()) {
+        document.querySelectorAll('.nav-live .live-dot').forEach(function (dot) {
+          dot.style.display = 'inline-block';
+        });
+      }
+    })();
+  </script>
+</body>
+
+</html>

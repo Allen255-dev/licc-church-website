@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us | Living Waters International Christian Center</title>
+  <meta name="description"
+    content="Get in touch with Living Waters International Christian Center. Find our address, map, and contact details in Port Harcourt, Rivers State.">
+  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    (function () {
+      var t = localStorage.getItem('licc-theme');
+      if (t === 'dark' || (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <style>
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .form-field label {
+      display: block;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .form-field input,
+    .form-field textarea,
+    .form-field select {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      background: white;
+      color: var(--ink);
+    }
+
+    .form-field input:focus,
+    .form-field textarea:focus {
+      outline: none;
+      border-color: var(--green-primary);
+    }
+
+    .map-frame {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .map-frame iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+
+    .contact-info-row {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .contact-info-row:last-child {
+      border-bottom: none;
+    }
+
+    .contact-info-row .ic {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: var(--bg-warm-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .contact-info-row .ic svg {
+      width: 20px;
+      height: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="brand">
+        <img src="logo.png" alt="LICC logo">
+        <span class="brand-text">Living Waters<span>International Christian Center</span></span>
+      </a>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="branches.html">Branches</a>
+        <a href="service-times.html">Service Times</a>
+        <a href="live.html" class="nav-live"><span class="live-dot" style="display:none;"></span>Live</a>
+        <a href="sermons.html">Sermons</a>
+        <a href="events.html">Events</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="blog.html">News</a>
+        <a href="contact.html" class="active">Contact</a>
+        <a href="give.html" class="nav-cta">Give</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle-btn" aria-label="Toggle dark and light mode" title="Switch theme (Dark / Light)">
+          <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <div class="nav-overlay"></div>
+
+  <main id="main">
+
+    <section class="page-hero">
+      <svg class="hero-arc" viewBox="0 0 1200 400" preserveAspectRatio="none" aria-hidden="true"
+        style="position:absolute;inset:0;opacity:0.4;">
+        <path d="M -50 250 C 250 50, 750 30, 1250 180" stroke="#E8B339" stroke-width="2" fill="none" opacity="0.5" />
+      </svg>
+      <div class="page-hero-inner">
+        <div class="breadcrumb"><a href="index.html">Home</a> / Contact</div>
+        <h1>We'd love to hear from you.</h1>
+        <p>Have a question, a prayer request, or just want directions? Reach out — our team is happy to help.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="grid-2" style="gap:60px; align-items:start;">
+
+          <div class="reveal">
+            <div class="eyebrow">Send a Message</div>
+            <h2 style="margin-top:14px;">Get in touch</h2>
+            <form class="contact-form" id="contactForm" style="margin-top:28px;">
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="name">Full Name</label>
+                  <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-field">
+                  <label for="phone">Phone Number</label>
+                  <input type="tel" id="phone" name="phone">
+                </div>
+              </div>
+              <div class="form-field">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+              </div>
+              <div class="form-field">
+                <label for="reason">Reason for Contact</label>
+                <select id="reason" name="reason">
+                  <option>General Inquiry</option>
+                  <option>Find / Connect with a Branch</option>
+                  <option>Plant a Branch / Home Fellowship</option>
+                  <option>Prayer Request</option>
+                  <option>Pastoral Care</option>
+                  <option>Volunteering</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="5" required></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary" style="margin-top:8px; align-self:flex-start;">Send
+                Message</button>
+            </form>
+          </div>
+
+          <div class="reveal">
+            <!-- Branch Locations Callout -->
+            <div class="card" style="padding:20px 24px; margin-bottom:24px; background:linear-gradient(135deg, rgba(26,155,82,0.08) 0%, rgba(232,179,57,0.1) 100%); border-left:4px solid var(--green-primary);">
+              <span class="branch-badge badge-campus" style="margin-bottom:6px;">Multiple Campuses</span>
+              <h4 style="font-size:1.15rem; margin-bottom:6px;">Looking for an LICC Branch near you?</h4>
+              <p style="font-size:0.9rem; line-height:1.5;">
+                We have locations across Port Harcourt (HQ Cathedral, Choba Uniport, Peter Odili), Oyigbo, Abuja, Lagos, and our Global Online E-Church.
+              </p>
+              <a href="branches.html" class="btn btn-sm btn-outline" style="margin-top:12px;">
+                View All Branch Details &rarr;
+              </a>
+            </div>
+
+            <div class="card" style="padding:8px 32px; margin-bottom:30px;">
+              <div class="contact-info-row">
+                <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#1A9B52" stroke-width="1.6">
+                    <path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 1 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg></div>
+                <div>
+                  <div class="service-name">Address</div>
+                  <p style="font-size:0.92rem; margin-top:2px;">108 Ahoada East–West Rd, near Eliozu Flyover,
+                    Rukpakwulosi, Port Harcourt 500272, Rivers State, Nigeria</p>
+                </div>
+              </div>
+              <div class="contact-info-row">
+                <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#1A9B52" stroke-width="1.6">
+                    <path
+                      d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 3a2 2 0 0 1-.5 2.1L8 10.1a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c1 .3 2 .6 3 .7a2 2 0 0 1 1.7 2z" />
+                  </svg></div>
+                <div>
+                  <div class="service-name">Phone</div>
+                  <p style="font-size:0.92rem; margin-top:2px;"><em>08102395782</em></p>
+                  <p style="font-size:0.92rem; margin-top:2px;"><em>08033398515</em></p>
+                </div>
+              </div>
+              <div class="contact-info-row">
+                <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#1A9B52" stroke-width="1.6">
+                    <path d="M4 4h16v16H4z" />
+                    <path d="M22 6l-10 7L2 6" />
+                  </svg></div>
+                <div>
+                  <div class="service-name">Email</div>
+                  <p style="font-size:0.92rem; margin-top:2px;"><em>liccglobalmissions@gmail.com</em></p>
+                </div>
+              </div>
+              <div class="contact-info-row">
+                <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#1A9B52" stroke-width="1.6">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M12 7v5l3 3" />
+                  </svg></div>
+                <div>
+                  <div class="service-name">Office Hours</div>
+                  <p style="font-size:0.92rem; margin-top:2px;">Mon–Fri 8am–6pm &middot; Sat 10am–4pm</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="map-frame" style="height:320px;">
+              <iframe
+                src="https://www.google.com/maps?q=Living+Waters+International+Christian+Center,+108+Ahoada+East-West+Rd,+Rukpakwulosi,+Port+Harcourt&output=embed"
+                loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                title="Map to Living Waters International Christian Center">
+              </iframe>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">
+            <img src="logo.png" alt="LICC logo">
+            <span class="footer-brand-text">Living Waters ICC</span>
+          </div>
+          <p style="max-width:280px; font-size:0.92rem;">A church family in Port Harcourt devoted to worship, the Word,
+            and walking with one another through life.</p>
+          <div class="social-row" style="margin-top:22px;">
+            <a href="https://www.facebook.com/theliccglobal" target="_blank" rel="noopener" aria-label="Facebook"><svg
+                viewBox="0 0 24 24" fill="white">
+                <path
+                  d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z" />
+              </svg></a>
+            <a href="https://www.youtube.com/@liccglobaltv" target="_blank" rel="noopener" aria-label="YouTube"><svg
+                viewBox="0 0 24 24" fill="white">
+                <path
+                  d="M22.5 7.2s-.2-1.6-.9-2.3c-.8-.9-1.7-.9-2.2-1C16 3.6 12 3.6 12 3.6h0s-4 0-7.4.3c-.5.1-1.4.1-2.2 1-.7.7-.9 2.3-.9 2.3S1.2 9 1.2 10.9v1.9c0 1.9.3 3.7.3 3.7s.2 1.6.9 2.3c.8.9 1.9.9 2.4 1 1.7.2 7.2.3 7.2.3s4 0 7.4-.3c.5-.1 1.4-.1 2.2-1 .7-.7.9-2.3.9-2.3s.3-1.9.3-3.7v-1.9c0-1.9-.3-3.7-.3-3.7zM9.7 14.9V8.7l6 3.1-6 3.1z" />
+              </svg></a>
+          </div>
+        </div>
+        <div>
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="branches.html">Our Branches</a></li>
+            <li><a href="service-times.html">Service Times</a></li>
+            <li><a href="live.html">Watch Live</a></li>
+            <li><a href="sermons.html">Sermons</a></li>
+            <li><a href="events.html">Events</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="blog.html">News & Blog</a></li>
+            <li><a href="give.html">Give</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Visit Us</h4>
+          <ul>
+            <li>108 Ahoada East–West Rd,<br>near Eliozu Flyover, Rukpakwulosi,<br>Port Harcourt 500272, Rivers State
+            </li>
+            <li>Sunday Service: 8:30–11:00am</li>
+            <li style="margin-top:6px;"><a href="branches.html" style="color:var(--gold); font-weight:600;">View All Campuses &rarr;</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Living Waters International Christian Center. All rights reserved.</span>
+        <span>Built with faith in Port Harcourt 🇳🇬</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="main.js"></script>
+  <script>
+    (function () {
+      function isLikelyServiceTime() {
+        var now = new Date();
+        var day = now.getDay();
+        var totalMins = now.getHours() * 60 + now.getMinutes();
+        return day === 0 && totalMins >= (8 * 60) && totalMins <= (11 * 60 + 30);
+      }
+      if (isLikelyServiceTime()) {
+        document.querySelectorAll(".nav-live .live-dot").forEach(function (dot) {
+          dot.style.display = "inline-block";
+        });
+      }
+    })();
+
+    // CONTACT FORM HANDLER
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+      contactForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const submitBtn = contactForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Sending...';
+        submitBtn.disabled = true;
+
+        const formData = new FormData(contactForm);
+        const name = formData.get('name');
+        const phone = formData.get('phone') || '';
+        const email = formData.get('email');
+        const reason = formData.get('reason');
+        const message = formData.get('message');
+
+        try {
+          // 1. SAVE TO SUPABASE (Admin Panel)
+          if (typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL.indexOf('YOUR_SUPABASE') === -1) {
+            const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            const { error } = await client.from('messages').insert([{ name, phone, email, reason, message }]);
+            if (error) {
+              console.error('Supabase save error:', error);
+              alert('Error saving to database: ' + error.message + '. Please check your Supabase table setup.');
+              submitBtn.textContent = originalText;
+              submitBtn.disabled = false;
+              return; // Stop here if DB save fails
+            }
+          }
+
+          // 2. SEND EMAIL VIA WEB3FORMS (Free email forwarding)
+          // To make this work, you just need to replace YOUR_WEB3FORMS_ACCESS_KEY with a free key from web3forms.com
+          const web3formsKey = 'YOUR_WEB3FORMS_ACCESS_KEY'; 
+          
+          if (web3formsKey !== 'YOUR_WEB3FORMS_ACCESS_KEY') {
+            await fetch('https://api.web3forms.com/submit', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+              body: JSON.stringify({
+                access_key: web3formsKey,
+                subject: 'New Website Contact Form: ' + reason,
+                from_name: name,
+                replyto: email,
+                message: 'Name: ' + name + '\nPhone: ' + phone + '\nEmail: ' + email + '\nReason: ' + reason + '\n\nMessage:\n' + message
+              })
+            });
+          }
+
+          alert('Thank you for reaching out! Your message has been sent successfully.');
+          contactForm.reset();
+        } catch (err) {
+          alert('Sorry, there was an error sending your message. Please try again or call us directly.');
+          console.error(err);
+        } finally {
+          submitBtn.textContent = originalText;
+          submitBtn.disabled = false;
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>

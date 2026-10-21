@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Not Found | Living Waters International Christian Center</title>
+  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    (function () {
+      var t = localStorage.getItem('licc-theme');
+      if (t === 'dark' || (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+</head>
+
+<body>
+
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="brand">
+        <img src="logo.png" alt="LICC logo">
+        <span class="brand-text">Living Waters<span>International Christian Center</span></span>
+      </a>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="branches.html">Branches</a>
+        <a href="service-times.html">Service Times</a>
+        <a href="live.html" class="nav-live">Live</a>
+        <a href="sermons.html">Sermons</a>
+        <a href="give.html" class="nav-cta">Give</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle-btn" aria-label="Toggle dark and light mode" title="Switch theme (Dark / Light)">
+          <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <div class="nav-overlay"></div>
+
+  <main id="main" style="min-height: calc(100vh - 280px); display:flex; align-items:center; justify-content:center; padding: 60px 24px;">
+    <div style="max-width: 580px; text-align:center;">
+      <div style="font-family: var(--font-display); font-size: clamp(5rem, 14vw, 8rem); font-weight:700; color: var(--green-primary); line-height:1; margin-bottom: 12px;">404</div>
+      <h1 style="font-size: clamp(1.6rem, 4vw, 2.2rem); margin-bottom: 16px;">Page Not Found</h1>
+      <p style="font-size: 1.05rem; margin-bottom: 32px; color: var(--ink-soft);">
+        The page you are looking for may have been moved, renamed, or is temporarily unavailable. Let us help you find your way back.
+      </p>
+      <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+        <a href="index.html" class="btn btn-primary" style="padding: 12px 28px;">Return to Home</a>
+        <a href="sermons.html" class="btn btn-outline" style="padding: 12px 24px;">Browse Sermons</a>
+        <a href="contact.html" class="btn btn-outline" style="padding: 12px 24px;">Contact Us</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom" style="border-top:none; padding-top:20px;">
+        <span>&copy; 2026 Living Waters International Christian Center. All rights reserved.</span>
+        <span>Built with faith in Port Harcourt 🇳🇬</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+
+</html>

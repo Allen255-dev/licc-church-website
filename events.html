@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Events | Living Waters International Christian Center</title>
+  <meta name="description"
+    content="Upcoming events and programs at Living Waters International Christian Center, Port Harcourt.">
+  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    (function () {
+      var t = localStorage.getItem('licc-theme');
+      if (t === 'dark' || (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    .event-card {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .event-card>.event-date {
+      flex-shrink: 0;
+    }
+
+    .event-card>a.btn {
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .event-date {
+      background: var(--bg-warm-2);
+      border-radius: 12px;
+      text-align: center;
+      padding: 16px 8px;
+    }
+
+    .event-date .day {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      color: var(--green-deep);
+      line-height: 1;
+    }
+
+    .event-date .mon {
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-top: 4px;
+    }
+
+    .event-meta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      margin-top: 8px;
+    }
+
+    .event-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .event-img {
+      width: 140px;
+      height: 120px;
+      border-radius: 12px;
+      background-size: cover;
+      background-position: center;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 640px) {
+      .event-card {
+        flex-wrap: wrap;
+        gap: 14px;
+      }
+      .event-img {
+        width: 100px;
+        height: 90px;
+      }
+      .event-card>a.btn {
+        margin-left: 0;
+        width: 100%;
+        margin-top: 6px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="brand">
+        <img src="logo.png" alt="LICC logo">
+        <span class="brand-text">Living Waters<span>International Christian Center</span></span>
+      </a>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="branches.html">Branches</a>
+        <a href="service-times.html">Service Times</a>
+        <a href="live.html" class="nav-live"><span class="live-dot" style="display:none;"></span>Live</a>
+        <a href="sermons.html">Sermons</a>
+        <a href="events.html" class="active">Events</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="blog.html">News</a>
+        <a href="contact.html">Contact</a>
+        <a href="give.html" class="nav-cta">Give</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle-btn" aria-label="Toggle dark and light mode" title="Switch theme (Dark / Light)">
+          <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <div class="nav-overlay"></div>
+
+  <main id="main">
+
+    <section class="page-hero">
+      <svg class="hero-arc" viewBox="0 0 1200 400" preserveAspectRatio="none" aria-hidden="true"
+        style="position:absolute;inset:0;opacity:0.4;">
+        <path d="M -50 250 C 250 50, 750 30, 1250 180" stroke="#E8B339" stroke-width="2" fill="none" opacity="0.5" />
+      </svg>
+      <div class="page-hero-inner">
+        <div class="breadcrumb"><a href="index.html">Home</a> / Events</div>
+        <h1>What's happening at LICC.</h1>
+        <p>From special services to outreach programs, here's what's coming up in our church calendar.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="container" style="max-width:880px;">
+        <div class="section-head reveal">
+          <div class="eyebrow">Upcoming</div>
+          <h2>Mark your calendar</h2>
+        </div>
+
+        <div id="eventsContainer">
+          <div class="card event-card reveal" style="margin-bottom:22px;">
+            <div class="event-date">
+              <div class="day">06</div>
+              <div class="mon">Jul</div>
+            </div>
+            <div>
+              <h3 style="font-size:1.15rem;">Mid-Year Thanksgiving Service</h3>
+              <p style="margin-top:6px; font-size:0.94rem;">Join us as we give thanks for God's faithfulness through the
+                first half of the year.</p>
+              <div class="event-meta">
+                <span>🕗 8:30am – 11:00am</span>
+                <span>📍 Main Auditorium</span>
+              </div>
+            </div>
+            <a href="contact.html" class="btn btn-outline" style="white-space:nowrap;">Learn More</a>
+          </div>
+
+          <div class="card event-card reveal" style="margin-bottom:22px;">
+            <div class="event-date">
+              <div class="day">19</div>
+              <div class="mon">Jul</div>
+            </div>
+            <div>
+              <h3 style="font-size:1.15rem;">Youth & Young Adults Fellowship</h3>
+              <p style="margin-top:6px; font-size:0.94rem;">An evening of worship, games, and an honest conversation
+                about faith for our youth and young adults.</p>
+              <div class="event-meta">
+                <span>🕔 4:00pm – 6:30pm</span>
+                <span>📍 Fellowship Hall</span>
+              </div>
+            </div>
+            <a href="contact.html" class="btn btn-outline" style="white-space:nowrap;">Learn More</a>
+          </div>
+
+          <div class="card event-card reveal" style="margin-bottom:22px;">
+            <div class="event-date">
+              <div class="day">02</div>
+              <div class="mon">Aug</div>
+            </div>
+            <div>
+              <h3 style="font-size:1.15rem;">Prayer & Fasting Week</h3>
+              <p style="margin-top:6px; font-size:0.94rem;">A week set apart to seek God together as a church family.
+                Details and schedule to follow.</p>
+              <div class="event-meta">
+                <span>🕡 Daily, times vary</span>
+                <span>📍 Main Auditorium</span>
+              </div>
+            </div>
+            <a href="contact.html" class="btn btn-outline" style="white-space:nowrap;">Learn More</a>
+          </div>
+        </div>
+
+        <p style="margin-top:20px; font-size:0.88rem; text-align:center;" id="eventsFallbackNote"><em>Note to church
+            admin: these are sample placeholders. Add real events through the <a href="admin.html">admin panel</a> and
+            they'll automatically appear here.</em></p>
+      </div>
+    </section>
+
+    <section style="padding-top:0;">
+      <div class="container">
+        <div class="cta-banner reveal">
+          <div>
+            <h2>Want event updates?</h2>
+            <p>Follow us on social media or reach out to our office to stay in the loop on everything happening at LICC.
+            </p>
+          </div>
+          <a href="contact.html" class="btn btn-gold">Contact Us</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">
+            <img src="logo.png" alt="LICC logo">
+            <span class="footer-brand-text">Living Waters ICC</span>
+          </div>
+          <p style="max-width:280px; font-size:0.92rem;">A church family in Port Harcourt devoted to worship, the Word,
+            and walking with one another through life.</p>
+          <div class="social-row" style="margin-top:22px;">
+            <a href="https://www.facebook.com/theliccglobal" target="_blank" rel="noopener" aria-label="Facebook"><svg
+                viewBox="0 0 24 24" fill="white">
+                <path
+                  d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z" />
+              </svg></a>
+            <a href="https://www.youtube.com/@liccglobaltv" target="_blank" rel="noopener" aria-label="YouTube"><svg
+                viewBox="0 0 24 24" fill="white">
+                <path
+                  d="M22.5 7.2s-.2-1.6-.9-2.3c-.8-.9-1.7-.9-2.2-1C16 3.6 12 3.6 12 3.6h0s-4 0-7.4.3c-.5.1-1.4.1-2.2 1-.7.7-.9 2.3-.9 2.3S1.2 9 1.2 10.9v1.9c0 1.9.3 3.7.3 3.7s.2 1.6.9 2.3c.8.9 1.9.9 2.4 1 1.7.2 7.2.3 7.2.3s4 0 7.4-.3c.5-.1 1.4-.1 2.2-1 .7-.7.9-2.3.9-2.3s.3-1.9.3-3.7v-1.9c0-1.9-.3-3.7-.3-3.7zM9.7 14.9V8.7l6 3.1-6 3.1z" />
+              </svg></a>
+          </div>
+        </div>
+        <div>
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="branches.html">Our Branches</a></li>
+            <li><a href="service-times.html">Service Times</a></li>
+            <li><a href="live.html">Watch Live</a></li>
+            <li><a href="sermons.html">Sermons</a></li>
+            <li><a href="events.html">Events</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="blog.html">News & Blog</a></li>
+            <li><a href="give.html">Give</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Visit Us</h4>
+          <ul>
+            <li>108 Ahoada East–West Rd,<br>near Eliozu Flyover, Rukpakwulosi,<br>Port Harcourt 500272, Rivers State
+            </li>
+            <li>Sunday Service: 8:30–11:00am</li>
+            <li style="margin-top:6px;"><a href="branches.html" style="color:var(--gold); font-weight:600;">View All Campuses &rarr;</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Living Waters International Christian Center. All rights reserved.</span>
+        <span>Built with faith in Port Harcourt 🇳🇬</span>
+      </div>
+    </div>
+  </footer>
+  <script src="main.js"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    function eventCardHtml(e) {
+      var d = new Date(e.event_date + 'T00:00:00');
+      var day = d.toLocaleDateString('en-GB', { day: '2-digit' });
+      var mon = d.toLocaleDateString('en-GB', { month: 'short' });
+      var timeStr = e.start_time ? '🕗 ' + e.start_time + (e.end_time ? ' – ' + e.end_time : '') : '';
+      var imageHtml = e.image_url
+        ? '<div class="event-img" style="background-image:url(\'' + e.image_url + '\');"></div>'
+        : '';
+      return '<div class="card event-card reveal" style="margin-bottom:22px;">' +
+        '<div class="event-date"><div class="day">' + day + '</div><div class="mon">' + mon + '</div></div>' +
+        imageHtml +
+        '<div>' +
+        '<h3 style="font-size:1.15rem;">' + e.title + '</h3>' +
+        (e.description ? '<p style="margin-top:6px; font-size:0.94rem;">' + e.description + '</p>' : '') +
+        '<div class="event-meta">' +
+        (timeStr ? '<span>' + timeStr + '</span>' : '') +
+        (e.location ? '<span>📍 ' + e.location + '</span>' : '') +
+        '</div>' +
+        '</div>' +
+        '<a href="contact.html" class="btn btn-outline" style="white-space:nowrap;">Learn More</a>' +
+        '</div>';
+    }
+
+    (async function loadPublicEvents() {
+      if (typeof SUPABASE_URL === 'undefined' || SUPABASE_URL.indexOf('YOUR_SUPABASE') !== -1) {
+        console.warn('[LICC Events] Supabase not configured yet.');
+        return;
+      }
+      try {
+        var client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        var result = await client.from('events').select('*').order('event_date', { ascending: true });
+        if (result.error) {
+          console.error('[LICC Events] Supabase error:', result.error.message, result.error);
+          return;
+        }
+        if (!result.data || result.data.length === 0) {
+          console.info('[LICC Events] No upcoming events found — showing placeholders.');
+          return;
+        }
+        console.info('[LICC Events] Loaded ' + result.data.length + ' event(s) from Supabase.');
+
+        var container = document.getElementById('eventsContainer');
+        var note = document.getElementById('eventsFallbackNote');
+        container.innerHTML = result.data.map(eventCardHtml).join('');
+        container.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('is-visible'); });
+        if (note) note.style.display = 'none';
+      } catch (e) {
+        console.error('[LICC Events] Unexpected error:', e);
+      }
+    })();
+  </script>
+  <script>
+    (function () {
+      function isLikelyServiceTime() {
+        var now = new Date();
+        var day = now.getDay();
+        var totalMins = now.getHours() * 60 + now.getMinutes();
+        return day === 0 && totalMins >= (8 * 60) && totalMins <= (11 * 60 + 30);
+      }
+      if (isLikelyServiceTime()) {
+        document.querySelectorAll(".nav-live .live-dot").forEach(function (dot) {
+          dot.style.display = "inline-block";
+        });
+      }
+    })();
+  </script>
+</body>
+
+</html>

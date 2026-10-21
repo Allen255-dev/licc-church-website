@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>News & Blog | Living Waters International Christian Center</title>
+  <meta name="description"
+    content="News, updates, and articles from Living Waters International Christian Center, Port Harcourt.">
+  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    (function () {
+      var t = localStorage.getItem('licc-theme');
+      if (t === 'dark' || (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    .blog-card {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .blog-thumb {
+      aspect-ratio: 4/3;
+      background: var(--bg-warm-2);
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      color: var(--ink-soft);
+      font-size: 0.78rem;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .blog-thumb svg {
+      width: 30px;
+      opacity: 0.4;
+    }
+
+    .blog-date {
+      font-size: 0.8rem;
+      color: var(--ink-soft);
+      margin-bottom: 8px;
+    }
+
+    .blog-card h3 {
+      font-size: 1.15rem;
+    }
+
+    /* ── Make cards feel clickable ────────────────────────────────── */
+    .blog-card {
+      cursor: pointer;
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+    .blog-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.12);
+    }
+    .blog-card:hover h3 { color: var(--green); }
+
+    /* ── News Modal ───────────────────────────────────────────────── */
+    .news-modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 8500;
+      background: rgba(0,0,0,0.72);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+    .news-modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .news-modal {
+      background: var(--bg-warm);
+      width: 100%;
+      max-width: 780px;
+      max-height: 90vh;
+      border-radius: 18px 18px 0 0;
+      overflow-y: auto;
+      padding: 0 0 40px;
+      transform: translateY(60px);
+      transition: transform 0.35s cubic-bezier(0.34,1.10,0.64,1);
+      position: relative;
+    }
+    .news-modal-overlay.active .news-modal {
+      transform: translateY(0);
+    }
+    .news-modal-thumb {
+      width: 100%;
+      aspect-ratio: 16/7;
+      object-fit: cover;
+      border-radius: 18px 18px 0 0;
+      display: block;
+    }
+    .news-modal-thumb-placeholder {
+      width: 100%;
+      aspect-ratio: 16/7;
+      background: var(--bg-warm-2);
+      border-radius: 18px 18px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-soft);
+    }
+    .news-modal-thumb-placeholder svg { width: 48px; opacity: 0.3; }
+    .news-modal-body {
+      padding: 28px 36px 0;
+    }
+    .news-modal-meta {
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+      margin-bottom: 12px;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .news-modal-tag {
+      background: var(--green);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .news-modal-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(1.35rem, 3.5vw, 2rem);
+      line-height: 1.25;
+      color: var(--ink);
+      margin-bottom: 18px;
+    }
+    .news-modal-content {
+      font-size: 0.97rem;
+      line-height: 1.8;
+      color: var(--ink-soft);
+      white-space: pre-wrap;
+    }
+    .news-modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(0,0,0,0.45);
+      color: #fff;
+      font-size: 1.4rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      transition: background 0.2s;
+      line-height: 1;
+    }
+    .news-modal-close:hover { background: rgba(0,0,0,0.7); }
+
+    /* Dark mode */
+    [data-theme="dark"] .news-modal { background: #0F1B14; }
+    [data-theme="dark"] .news-modal-thumb-placeholder { background: #182314; }
+    [data-theme="dark"] .news-modal-title { color: #E8F5EE; }
+    [data-theme="dark"] .news-modal-content { color: #A8C4B0; }
+
+    /* Mobile */
+    @media (max-width: 600px) {
+      .news-modal { max-height: 95vh; border-radius: 14px 14px 0 0; }
+      .news-modal-body { padding: 20px 20px 0; }
+      .news-modal-title { font-size: 1.25rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="brand">
+        <img src="logo.png" alt="LICC logo">
+        <span class="brand-text">Living Waters<span>International Christian Center</span></span>
+      </a>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="branches.html">Branches</a>
+        <a href="service-times.html">Service Times</a>
+        <a href="live.html" class="nav-live"><span class="live-dot" style="display:none;"></span>Live</a>
+        <a href="sermons.html">Sermons</a>
+        <a href="events.html">Events</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="blog.html" class="active">News</a>
+        <a href="contact.html">Contact</a>
+        <a href="give.html" class="nav-cta">Give</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle-btn" aria-label="Toggle dark and light mode" title="Switch theme (Dark / Light)">
+          <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <div class="nav-overlay"></div>
+
+  <main id="main">
+
+    <section class="page-hero">
+      <svg class="hero-arc" viewBox="0 0 1200 400" preserveAspectRatio="none" aria-hidden="true"
+        style="position:absolute;inset:0;opacity:0.4;">
+        <path d="M -50 250 C 250 50, 750 30, 1250 180" stroke="#E8B339" stroke-width="2" fill="none" opacity="0.5" />
+      </svg>
+      <div class="page-hero-inner">
+        <div class="breadcrumb"><a href="index.html">Home</a> / News</div>
+        <h1>News from our church family.</h1>
+        <p>Updates, testimonies, and reflections from life at Living Waters International Christian Center.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="grid-3" id="newsGrid">
+          <article class="blog-card card reveal">
+            <div class="blog-thumb">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <path d="M21 15l-5-5L5 21" />
+              </svg>
+              Article image
+            </div>
+            <span class="blog-date">Sample post</span>
+            <h3>5 Ways to Grow Your Faith This Month</h3>
+            <p style="margin-top:8px; font-size:0.94rem;">Practical, simple habits to help you grow closer to God in
+              your daily life.</p>
+          </article>
+          <article class="blog-card card reveal">
+            <div class="blog-thumb">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <path d="M21 15l-5-5L5 21" />
+              </svg>
+              Article image
+            </div>
+            <span class="blog-date">Sample post</span>
+            <h3>Recap: Our Recent Outreach Program</h3>
+            <p style="margin-top:8px; font-size:0.94rem;">A look back at how our church family served our community this
+              past month.</p>
+          </article>
+          <article class="blog-card card reveal">
+            <div class="blog-thumb">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <path d="M21 15l-5-5L5 21" />
+              </svg>
+              Article image
+            </div>
+            <span class="blog-date">Sample post</span>
+            <h3>A Testimony of God's Faithfulness</h3>
+            <p style="margin-top:8px; font-size:0.94rem;">One of our members shares how God moved in her life this year.
+            </p>
+          </article>
+        </div>
+        <p style="margin-top:30px; font-size:0.88rem; text-align:center;" id="newsFallbackNote"><em>Note to church
+            admin: these are sample placeholders. Publish real posts through the <a href="admin.html">admin panel</a>
+            and they'll automatically appear here.</em></p>
+      </div>
+    </section>
+
+    <section style="padding-top:0;">
+      <div class="container">
+        <div class="cta-banner reveal">
+          <div>
+            <h2>Have a story to share?</h2>
+            <p>We'd love to feature your testimony or update on our blog.</p>
+          </div>
+          <a href="contact.html" class="btn btn-gold">Get in Touch</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">
+            <img src="logo.png" alt="LICC logo">
+            <span class="footer-brand-text">Living Waters ICC</span>
+          </div>
+          <p style="max-width:280px; font-size:0.92rem;">A church family in Port Harcourt devoted to worship, the Word,
+            and walking with one another through life.</p>
+          <div class="social-row" style="margin-top:22px;">
+            <a href="https://www.facebook.com/theliccglobal" target="_blank" rel="noopener" aria-label="Facebook"><svg
+                viewBox="0 0 24 24" fill="white">
+                <path
+                  d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z" />
+              </svg></a>
+            <a href="https://www.youtube.com/@liccglobaltv" target="_blank" rel="noopener" aria-label="YouTube"><svg
+                viewBox="0 0 24 24" fill="white">
+                <path
+                  d="M22.5 7.2s-.2-1.6-.9-2.3c-.8-.9-1.7-.9-2.2-1C16 3.6 12 3.6 12 3.6h0s-4 0-7.4.3c-.5.1-1.4.1-2.2 1-.7.7-.9 2.3-.9 2.3S1.2 9 1.2 10.9v1.9c0 1.9.3 3.7.3 3.7s.2 1.6.9 2.3c.8.9 1.9.9 2.4 1 1.7.2 7.2.3 7.2.3s4 0 7.4-.3c.5-.1 1.4-.1 2.2-1 .7-.7.9-2.3.9-2.3s.3-1.9.3-3.7v-1.9c0-1.9-.3-3.7-.3-3.7zM9.7 14.9V8.7l6 3.1-6 3.1z" />
+              </svg></a>
+          </div>
+        </div>
+        <div>
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="branches.html">Our Branches</a></li>
+            <li><a href="service-times.html">Service Times</a></li>
+            <li><a href="live.html">Watch Live</a></li>
+            <li><a href="sermons.html">Sermons</a></li>
+            <li><a href="events.html">Events</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="blog.html">News & Blog</a></li>
+            <li><a href="give.html">Give</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Visit Us</h4>
+          <ul>
+            <li>108 Ahoada East–West Rd,<br>near Eliozu Flyover, Rukpakwulosi,<br>Port Harcourt 500272, Rivers State
+            </li>
+            <li>Sunday Service: 8:30–11:00am</li>
+            <li style="margin-top:6px;"><a href="branches.html" style="color:var(--gold); font-weight:600;">View All Campuses &rarr;</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Living Waters International Christian Center. All rights reserved.</span>
+        <span>Built with faith in Port Harcourt 🇳🇬</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- News Modal Overlay -->
+  <div id="newsModalOverlay" class="news-modal-overlay" role="dialog" aria-modal="true" aria-label="News details" tabindex="-1">
+    <div class="news-modal" id="newsModal">
+      <button class="news-modal-close" id="newsModalClose" aria-label="Close modal">&times;</button>
+      <div id="newsModalThumbWrap"></div>
+      <div class="news-modal-body">
+        <div class="news-modal-meta">
+          <span class="news-modal-tag" id="newsModalTag">Update</span>
+          <span id="newsModalMeta"></span>
+        </div>
+        <h2 class="news-modal-title" id="newsModalTitle"></h2>
+        <div class="news-modal-content" id="newsModalContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    var currentNewsItems = [];
+
+    // Sample fallback articles
+    var sampleNews = [
+      {
+        title: "5 Ways to Grow Your Faith This Month",
+        author: "Pastor Francis",
+        published_date: "2026-10-01",
+        image_url: "",
+        body: "Faith is not passive; it thrives when nurtured through intentional daily habits.\n\n1. Consistent Morning Prayer: Start your day by surrendering your plans to God before diving into daily concerns.\n2. Deep Scripture Meditation: Focus on one passage daily rather than rushing through chapters.\n3. Fellowship with Believers: Stay actively connected through our mid-week services and connect groups.\n4. Intentional Acts of Kindness: Express Christ's love practically to those around you.\n5. Worship Throughout the Day: Cultivate gratitude and praise regardless of your current circumstances."
+      },
+      {
+        title: "Recap: Our Recent Outreach Program",
+        author: "Outreach Team",
+        published_date: "2026-09-24",
+        image_url: "",
+        body: "Last weekend, over 150 volunteers from Living Waters ICC stepped out into our surrounding Port Harcourt community to share food packages, medical checks, and the gospel of Jesus Christ.\n\nThanks to your generous giving and prayers, we were able to reach more than 400 families with essential support and spiritual encouragement.\n\nWe thank everyone who served, gave, and prayed. Stay tuned for our upcoming community welfare mission next month!"
+      },
+      {
+        title: "A Testimony of God's Faithfulness",
+        author: "Sister Grace",
+        published_date: "2026-09-15",
+        image_url: "",
+        body: "When I faced uncertainty regarding my health and family earlier this year, the pastoral team and church family rallied with unwavering prayer and faith.\n\nGod showed up mightily and proved that no situation is beyond His power. I give all glory to Jesus for total healing and restoration in my household.\n\nIf you are trusting God for a breakthrough, do not give up—He remains faithful to His promises."
+      }
+    ];
+
+    function openNewsModal(item) {
+      if (!item) return;
+      var overlay = document.getElementById('newsModalOverlay');
+      var thumbWrap = document.getElementById('newsModalThumbWrap');
+      var metaEl = document.getElementById('newsModalMeta');
+      var titleEl = document.getElementById('newsModalTitle');
+      var contentEl = document.getElementById('newsModalContent');
+
+      if (item.image_url) {
+        thumbWrap.innerHTML = '<img class="news-modal-thumb" src="' + item.image_url + '" alt="' + (item.title || '') + '">';
+      } else {
+        thumbWrap.innerHTML = '<div class="news-modal-thumb-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="M21 15l-5-5L5 21" /></svg></div>';
+      }
+
+      var dateStr = '';
+      if (item.published_date) {
+        var d = new Date(item.published_date + 'T00:00:00');
+        dateStr = isNaN(d.getTime()) ? item.published_date : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      }
+
+      metaEl.textContent = (item.author || 'LICC') + (dateStr ? ' · ' + dateStr : '');
+      titleEl.textContent = item.title || '';
+      contentEl.textContent = item.body || 'No additional content provided.';
+
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      overlay.focus();
+    }
+
+    function closeNewsModal() {
+      var overlay = document.getElementById('newsModalOverlay');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('newsModalClose').addEventListener('click', closeNewsModal);
+    document.getElementById('newsModalOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeNewsModal();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeNewsModal();
+    });
+
+    // Delegated click handler on newsGrid
+    document.getElementById('newsGrid').addEventListener('click', function(e) {
+      var card = e.target.closest('.blog-card');
+      if (!card) return;
+      var cards = Array.from(document.querySelectorAll('#newsGrid .blog-card'));
+      var idx = cards.indexOf(card);
+      var sourceList = currentNewsItems.length > 0 ? currentNewsItems : sampleNews;
+      if (idx >= 0 && sourceList[idx]) {
+        openNewsModal(sourceList[idx]);
+      }
+    });
+
+    function newsCardHtml(n, idx) {
+      var d = new Date(n.published_date + 'T00:00:00');
+      var dateStr = isNaN(d.getTime()) ? n.published_date : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      var thumb = n.image_url
+        ? '<div class="blog-thumb" style="background-image:url(\'' + n.image_url + '\'); background-size:cover; background-position:center;"></div>'
+        : '<div class="blog-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>';
+      var excerpt = n.body ? n.body.slice(0, 130) + (n.body.length > 130 ? '…' : '') : '';
+      return '<article class="blog-card card reveal" data-news-id="' + idx + '">' +
+        thumb +
+        '<span class="blog-date">' + (n.author || 'LICC Admin') + ' &middot; ' + dateStr + '</span>' +
+        '<h3>' + n.title + '</h3>' +
+        '<p style="margin-top:8px; font-size:0.94rem;">' + excerpt + '</p>' +
+        '</article>';
+    }
+
+    (async function loadPublicNews() {
+      if (typeof SUPABASE_URL === 'undefined' || SUPABASE_URL.indexOf('YOUR_SUPABASE') !== -1) {
+        console.warn('[LICC News] Supabase not configured yet.');
+        return;
+      }
+      try {
+        var client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        var result = await client.from('news').select('*').order('published_date', { ascending: false }).limit(12);
+        if (result.error) {
+          console.error('[LICC News] Supabase error:', result.error.message, result.error);
+          return;
+        }
+        if (!result.data || result.data.length === 0) {
+          console.info('[LICC News] No posts found yet — showing placeholders.');
+          return;
+        }
+        console.info('[LICC News] Loaded ' + result.data.length + ' post(s) from Supabase.');
+
+        currentNewsItems = result.data;
+        var grid = document.getElementById('newsGrid');
+        var note = document.getElementById('newsFallbackNote');
+        grid.innerHTML = result.data.map(function(item, idx) { return newsCardHtml(item, idx); }).join('');
+        grid.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('is-visible'); });
+        if (note) note.style.display = 'none';
+      } catch (e) {
+        console.error('[LICC News] Unexpected error:', e);
+      }
+    })();
+  </script>
+  <script>
+    (function () {
+      function isLikelyServiceTime() {
+        var now = new Date();
+        var day = now.getDay();
+        var totalMins = now.getHours() * 60 + now.getMinutes();
+        return day === 0 && totalMins >= (8 * 60) && totalMins <= (11 * 60 + 30);
+      }
+      if (isLikelyServiceTime()) {
+        document.querySelectorAll(".nav-live .live-dot").forEach(function (dot) {
+          dot.style.display = "inline-block";
+        });
+      }
+    })();
+  </script>
+</body>
+
+</html>

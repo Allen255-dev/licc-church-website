@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Watch Live | Living Waters International Christian Center</title>
+  <meta name="description"
+    content="Watch Living Waters International Christian Center's live service online. Join us live on Sundays at 8:30am, streamed on YouTube and Facebook.">
+  <link rel="icon" href="logo.png" type="image/png">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    (function () {
+      var t = localStorage.getItem('licc-theme');
+      if (t === 'dark' || (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+</head>
+
+<body>
+
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="brand">
+        <img src="logo.png" alt="LICC logo">
+        <span class="brand-text">Living Waters<span>International Christian Center</span></span>
+      </a>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="branches.html">Branches</a>
+        <a href="service-times.html">Service Times</a>
+        <a href="live.html" class="active nav-live"><span class="live-dot" id="navLiveDot"
+            style="display:none;"></span>Live</a>
+        <a href="sermons.html">Sermons</a>
+        <a href="events.html">Events</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="blog.html">News</a>
+        <a href="contact.html">Contact</a>
+        <a href="give.html" class="nav-cta">Give</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle-btn" aria-label="Toggle dark and light mode" title="Switch theme (Dark / Light)">
+          <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <div class="nav-overlay"></div>
+
+  <main id="main">
+
+    <section class="page-hero">
+      <svg class="hero-arc" viewBox="0 0 1200 400" preserveAspectRatio="none" aria-hidden="true"
+        style="position:absolute;inset:0;opacity:0.4;">
+        <path d="M -50 250 C 250 50, 750 30, 1250 180" stroke="#E8B339" stroke-width="2" fill="none" opacity="0.5" />
+      </svg>
+      <div class="page-hero-inner">
+        <div class="breadcrumb"><a href="index.html">Home</a> / Watch Live</div>
+        <h1>Watch live, wherever you are.</h1>
+        <p>Join our service in real time. We stream every Sunday, and the player below goes live automatically when we
+          start broadcasting.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="container" style="max-width:960px;">
+
+        <div class="video-frame reveal" id="playerContainer" style="position:relative;">
+          <iframe id="liveFrame"
+            src="https://www.youtube.com/embed/videoseries?list=UUuz0kr6UILixFcTux9rsnIg&autoplay=0&rel=0"
+            title="LICC Global TV Live Stream & Broadcasts"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen referrerpolicy="strict-origin-when-cross-origin">
+          </iframe>
+        </div>
+
+        <div class="stream-platforms reveal" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <a href="https://www.youtube.com/@liccglobaltv/live" target="_blank" rel="noopener"
+              class="platform-btn youtube" style="background:var(--green-primary); color:white; border-color:var(--green-primary);">
+              <svg viewBox="0 0 24 24" style="fill:white;">
+                <path
+                  d="M22.5 7.2s-.2-1.6-.9-2.3c-.8-.9-1.7-.9-2.2-1C16 3.6 12 3.6 12 3.6h0s-4 0-7.4.3c-.5.1-1.4.1-2.2 1-.7.7-.9 2.3-.9 2.3S1.2 9 1.2 10.9v1.9c0 1.9.3 3.7.3 3.7s.2 1.6.9 2.3c.8.9 1.9.9 2.4 1 1.7.2 7.2.3 7.2.3s4 0 7.4-.3c.5-.1 1.4-.1 2.2-1 .7-.7.9-2.3.9-2.3s.3-1.9.3-3.7v-1.9c0-1.9-.3-3.7-.3-3.7zM9.7 14.9V8.7l6 3.1-6 3.1z" />
+              </svg>
+              Watch Directly on YouTube Live
+            </a>
+            <a href="https://www.facebook.com/theliccglobal" target="_blank" rel="noopener" class="platform-btn facebook">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z" />
+              </svg>
+              Watch on Facebook Live
+            </a>
+          </div>
+          <button id="toggleStreamModeBtn" onclick="toggleStreamMode()" style="background:none; border:none; color:var(--ink-soft); font-size:0.82rem; cursor:pointer; text-decoration:underline;">Switch to Channel Live Link</button>
+        </div>
+
+        <div class="next-service-card reveal">
+          <div class="ic-circle"><svg viewBox="0 0 24 24" fill="none" stroke="#1A9B52" stroke-width="1.7">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 7v5l3 3" />
+            </svg></div>
+          <div>
+            <div class="service-name">Next Live Service</div>
+            <div class="service-sub" id="nextServiceText">Sunday, 8:30am – 11:00am (WAT)</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- WHY WATCH ONLINE -->
+    <section class="section-alt">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="eyebrow">Can't Make It In Person?</div>
+          <h2>You can still be part of the service</h2>
+        </div>
+        <div class="grid-3">
+          <div class="card reveal">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1A9B52" stroke-width="1.6">
+                <rect x="2" y="3" width="20" height="14" rx="2" />
+                <path d="M8 21h8M12 17v4" />
+              </svg>
+            </div>
+            <h3>Watch From Anywhere</h3>
+            <p>Traveling, unwell, or simply can't make it in? Tune in live from your phone, tablet, or computer.</p>
+          </div>
+          <div class="card reveal">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1A9B52" stroke-width="1.6">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+            </div>
+            <h3>Worship Together, Apart</h3>
+            <p>Comment, pray, and connect with others watching live — you're still part of the church family in that
+              moment.</p>
+          </div>
+          <div class="card reveal">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1A9B52" stroke-width="1.6">
+                <path d="M9 18V6l8 6-8 6z" />
+              </svg>
+            </div>
+            <h3>Catch the Replay</h3>
+            <p>If you miss it live, the full message is usually uploaded to our Sermons page shortly after.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding-top:0;">
+      <div class="container">
+        <div class="cta-banner reveal">
+          <div>
+            <h2>Prefer to join in person?</h2>
+            <p>We'd love to see you at our building in Rukpakwulosi this Sunday.</p>
+          </div>
+          <a href="service-times.html" class="btn btn-gold">Service Times & Directions</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">
+            <img src="logo.png" alt="LICC logo">
+            <span class="footer-brand-text">Living Waters ICC</span>
+          </div>
+          <p style="max-width:280px; font-size:0.92rem;">A church family in Port Harcourt devoted to worship, the Word,
+            and walking with one another through life.</p>
+          <div class="social-row" style="margin-top:22px;">
+            <a href="https://www.facebook.com/theliccglobal" target="_blank" rel="noopener" aria-label="Facebook"><svg
+                viewBox="0 0 24 24" fill="white">
+                <path
+                  d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z" />
+              </svg></a>
+            <a href="https://www.youtube.com/@liccglobaltv/streams" target="_blank" rel="noopener"
+              aria-label="YouTube"><svg viewBox="0 0 24 24" fill="white">
+                <path
+                  d="M22.5 7.2s-.2-1.6-.9-2.3c-.8-.9-1.7-.9-2.2-1C16 3.6 12 3.6 12 3.6h0s-4 0-7.4.3c-.5.1-1.4.1-2.2 1-.7.7-.9 2.3-.9 2.3S1.2 9 1.2 10.9v1.9c0 1.9.3 3.7.3 3.7s.2 1.6.9 2.3c.8.9 1.9.9 2.4 1 1.7.2 7.2.3 7.2.3s4 0 7.4-.3c.5-.1 1.4-.1 2.2-1 .7-.7.9-2.3.9-2.3s.3-1.9.3-3.7v-1.9c0-1.9-.3-3.7-.3-3.7zM9.7 14.9V8.7l6 3.1-6 3.1z" />
+              </svg></a>
+          </div>
+        </div>
+        <div>
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="branches.html">Our Branches</a></li>
+            <li><a href="service-times.html">Service Times</a></li>
+            <li><a href="live.html">Watch Live</a></li>
+            <li><a href="sermons.html">Sermons</a></li>
+            <li><a href="events.html">Events</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="blog.html">News & Blog</a></li>
+            <li><a href="give.html">Give</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Visit Us</h4>
+          <ul>
+            <li>108 Ahoada East–West Rd,<br>near Eliozu Flyover, Rukpakwulosi,<br>Port Harcourt 500272, Rivers State
+            </li>
+            <li>Sunday Service: 8:30–11:00am</li>
+            <li style="margin-top:6px;"><a href="branches.html" style="color:var(--gold); font-weight:600;">View All Campuses &rarr;</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Living Waters International Christian Center. All rights reserved. &middot; <a
+            href="admin.html" style="opacity:0.6;">Admin</a></span>
+        <span>Built with faith in Port Harcourt 🇳🇬</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+  <script>
+    // Calculates the next upcoming Sunday service date/time automatically,
+    // based on the church's actual Sunday 8:30am-11:00am schedule.
+    (function () {
+      function isLikelyServiceTime() {
+        var now = new Date();
+        var day = now.getDay(); // 0 = Sunday
+        var totalMins = now.getHours() * 60 + now.getMinutes();
+        var start = 8 * 60 + 0;   // give a 30-min early window before 8:30
+        var end = 11 * 60 + 30;   // give a short buffer after 11:00
+        return day === 0 && totalMins >= start && totalMins <= end;
+      }
+
+      function getNextSunday() {
+        var now = new Date();
+        var day = now.getDay();
+        var totalMins = now.getHours() * 60 + now.getMinutes();
+        var serviceEndMins = 11 * 60; // 11:00am
+
+        var daysUntilSunday;
+        if (day === 0 && totalMins < serviceEndMins) {
+          // It's Sunday and the service hasn't ended yet - today is "next"
+          daysUntilSunday = 0;
+        } else {
+          // Otherwise, count days forward to the upcoming Sunday
+          daysUntilSunday = (7 - day) % 7;
+          if (daysUntilSunday === 0) daysUntilSunday = 7;
+        }
+
+        var nextSunday = new Date(now);
+        nextSunday.setDate(now.getDate() + daysUntilSunday);
+        return nextSunday;
+      }
+
+      var navDot = document.getElementById('navLiveDot');
+      var nextServiceText = document.getElementById('nextServiceText');
+
+      if (isLikelyServiceTime()) {
+        if (navDot) navDot.style.display = 'inline-block';
+        if (nextServiceText) nextServiceText.textContent = 'Happening now — 8:30am to 11:00am (WAT)';
+      } else if (nextServiceText) {
+        var nextSunday = getNextSunday();
+        var isToday = nextSunday.toDateString() === new Date().toDateString();
+        var dateLabel = isToday
+          ? 'Today'
+          : nextSunday.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+        nextServiceText.textContent = dateLabel + ', 8:30am – 11:00am (WAT)';
+      }
+    })();
+
+    var isLiveStreamMode = false;
+    function toggleStreamMode() {
+      var frame = document.getElementById('liveFrame');
+      var btn = document.getElementById('toggleStreamModeBtn');
+      if (!frame || !btn) return;
+      if (!isLiveStreamMode) {
+        frame.src = 'https://www.youtube-nocookie.com/embed/live_stream?channel=UCuz0kr6UILixFcTux9rsnIg&autoplay=0';
+        btn.textContent = 'Switch to Latest Uploads Playlist';
+        isLiveStreamMode = true;
+      } else {
+        frame.src = 'https://www.youtube.com/embed/videoseries?list=UUuz0kr6UILixFcTux9rsnIg&autoplay=0&rel=0';
+        btn.textContent = 'Switch to Channel Live Link';
+        isLiveStreamMode = false;
+      }
+    }
+  </script>
+</body>
+
+</html>

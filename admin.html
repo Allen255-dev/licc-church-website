@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel | Living Waters International Christian Center</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    (function () {
+      var t = localStorage.getItem('licc-theme');
+      if (t === 'dark' || (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      background: var(--bg-warm-2);
+    }
+
+    .admin-header {
+      background: var(--green-deep-2);
+      color: white;
+      padding: 18px 0;
+    }
+
+    .admin-header .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .admin-header .brand-mini {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .admin-header img {
+      height: 34px;
+    }
+
+    .admin-header span.title {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+    }
+
+    .admin-header .btn-logout {
+      background: rgba(255, 255, 255, 0.12);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 9px 18px;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .admin-header .btn-logout:hover {
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    /* Login screen */
+    .login-wrap {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .login-card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lift);
+      padding: 48px 40px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .login-card img {
+      height: 48px;
+      margin: 0 auto 18px;
+    }
+
+    .login-card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+    }
+
+    .login-card p {
+      font-size: 0.9rem;
+      margin-bottom: 26px;
+    }
+
+    .login-card input {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      margin-bottom: 14px;
+      font-family: var(--font-body);
+    }
+
+    .login-card input:focus {
+      outline: none;
+      border-color: var(--green-primary);
+    }
+
+    .password-input-wrapper {
+      position: relative;
+      width: 100%;
+      margin-bottom: 14px;
+    }
+
+    .password-input-wrapper input {
+      margin-bottom: 0 !important;
+      padding-right: 46px !important;
+    }
+
+    .password-toggle-btn {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      padding: 6px;
+      cursor: pointer;
+      color: var(--ink-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      transition: color 0.18s ease, background 0.18s ease;
+      z-index: 2;
+    }
+
+    .password-toggle-btn:hover {
+      color: var(--green-primary);
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .password-toggle-btn:focus-visible {
+      outline: 2px solid var(--green-primary);
+      outline-offset: 1px;
+    }
+
+    .password-toggle-btn svg {
+      width: 20px;
+      height: 20px;
+      display: block;
+    }
+
+    .login-error {
+      background: #FDEDED;
+      color: #C42F2F;
+      font-size: 0.85rem;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 14px;
+      display: none;
+    }
+
+    /* Admin dashboard layout */
+    .admin-body {
+      display: none;
+    }
+
+    .admin-tabs {
+      display: flex;
+      gap: 6px;
+      background: white;
+      border-radius: 100px;
+      padding: 6px;
+      width: fit-content;
+      margin: 28px auto 0;
+      box-shadow: var(--shadow-soft);
+      flex-wrap: wrap;
+    }
+
+    .admin-tab {
+      padding: 10px 22px;
+      border-radius: 100px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--ink-soft);
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    .admin-tab.active {
+      background: var(--green-primary);
+      color: white;
+    }
+
+    .admin-panel-section {
+      display: none;
+      padding: 36px 0 70px;
+    }
+
+    .admin-panel-section.active {
+      display: block;
+    }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 30px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .admin-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow-soft);
+      position: sticky;
+      top: 90px;
+    }
+
+    .form-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 18px;
+    }
+
+    .form-field {
+      margin-bottom: 14px;
+    }
+
+    .form-field label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .form-field input,
+    .form-field textarea,
+    .form-field select {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--line);
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-size: 0.92rem;
+    }
+
+    .form-field input:focus,
+    .form-field textarea:focus {
+      outline: none;
+      border-color: var(--green-primary);
+    }
+
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn-block {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .item-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .item-row {
+      background: white;
+      border-radius: 12px;
+      padding: 18px 22px;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .item-row .thumb {
+      width: 84px;
+      height: 84px;
+      border-radius: 10px;
+      background: var(--bg-warm-2);
+      flex-shrink: 0;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .item-row .thumb svg {
+      width: 24px;
+      opacity: 0.35;
+    }
+
+    .item-row .info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .item-row .info h4 {
+      font-size: 0.98rem;
+      margin-bottom: 3px;
+    }
+
+    .item-row .info p {
+      font-size: 0.82rem;
+      margin: 0;
+    }
+
+    .item-row .actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: 1.5px solid var(--line);
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .icon-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .icon-btn.danger:hover {
+      background: #FDEDED;
+      border-color: #E03B3B;
+    }
+
+    .icon-btn.edit:hover {
+      background: var(--bg-warm-2);
+      border-color: var(--green-primary);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 50px 20px;
+      color: var(--ink-soft);
+      font-size: 0.92rem;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--green-deep);
+      color: white;
+      padding: 14px 22px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      box-shadow: var(--shadow-lift);
+      display: none;
+      z-index: 300;
+    }
+
+    .toast.error {
+      background: #C42F2F;
+    }
+
+    .file-hint {
+      font-size: 0.78rem;
+      color: var(--ink-soft);
+      margin-top: 4px;
+    }
+
+    .setup-banner {
+      background: #FFF6E0;
+      border: 1px solid #F0D28A;
+      color: #8A6212;
+      border-radius: 10px;
+      padding: 16px 20px;
+      font-size: 0.88rem;
+      margin-bottom: 24px;
+    }
+
+    /* Upload progress */
+    .upload-progress-wrap {
+      display: none;
+      margin-top: 10px;
+      background: var(--bg-warm-2);
+      border-radius: 8px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+    }
+    .upload-progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--ink-soft);
+      margin-bottom: 7px;
+    }
+    .upload-progress-bar-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(13,92,50,0.12);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+    .upload-progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--green-primary), var(--green-light));
+      border-radius: 100px;
+      transition: width 0.3s ease;
+    }
+
+    /* =========================================================
+       ADMIN DARK MODE OVERRIDES
+       ========================================================= */
+    [data-theme="dark"] .admin-header {
+      background: #08150D !important;
+      border-bottom: 1px solid rgba(130, 229, 169, 0.2);
+    }
+
+    [data-theme="dark"] .admin-header .title {
+      color: #82E5A9 !important;
+    }
+
+    [data-theme="dark"] .admin-tabs {
+      background: #101D15 !important;
+      border: 1px solid rgba(130, 229, 169, 0.18) !important;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45) !important;
+    }
+
+    [data-theme="dark"] .admin-tab {
+      color: #B2C7BA !important;
+    }
+
+    [data-theme="dark"] .admin-tab:hover {
+      color: #82E5A9 !important;
+    }
+
+    [data-theme="dark"] .admin-tab.active {
+      background: #22C55E !important;
+      color: #061109 !important;
+      font-weight: 700 !important;
+    }
+
+    [data-theme="dark"] .form-card {
+      background: #101D15 !important;
+      border: 1px solid rgba(130, 229, 169, 0.2) !important;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55) !important;
+    }
+
+    [data-theme="dark"] .form-card h3 {
+      color: #82E5A9 !important;
+    }
+
+    [data-theme="dark"] .form-field label {
+      color: #D2E4DA !important;
+    }
+
+    [data-theme="dark"] .form-field input,
+    [data-theme="dark"] .form-field textarea,
+    [data-theme="dark"] .form-field select {
+      background: #0A140E !important;
+      color: #EDF5F0 !important;
+      border-color: rgba(130, 229, 169, 0.24) !important;
+    }
+
+    [data-theme="dark"] .form-field input:focus,
+    [data-theme="dark"] .form-field textarea:focus,
+    [data-theme="dark"] .form-field select:focus {
+      border-color: #22C55E !important;
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15) !important;
+    }
+
+    [data-theme="dark"] .empty-state {
+      background: #101D15 !important;
+      border-color: rgba(130, 229, 169, 0.18) !important;
+      color: #B2C7BA !important;
+    }
+
+    [data-theme="dark"] .empty-state code {
+      background: #0A140E !important;
+      color: #FCD34D !important;
+      border: 1px solid rgba(130, 229, 169, 0.2) !important;
+    }
+
+    [data-theme="dark"] .setup-banner {
+      background: rgba(232, 179, 57, 0.1) !important;
+      border-color: rgba(232, 179, 57, 0.3) !important;
+      color: #FCD34D !important;
+    }
+
+    [data-theme="dark"] .setup-banner code {
+      background: #0A140E !important;
+      color: #82E5A9 !important;
+    }
+
+    [data-theme="dark"] .item-row {
+      background: #101D15 !important;
+      border: 1px solid rgba(130, 229, 169, 0.18) !important;
+    }
+
+    [data-theme="dark"] .item-row:hover {
+      background: #14251B !important;
+      border-color: #22C55E !important;
+    }
+
+    [data-theme="dark"] .item-row h4 {
+      color: #EDF5F0 !important;
+    }
+
+    [data-theme="dark"] .item-row p {
+      color: #A3B8AC !important;
+    }
+
+    [data-theme="dark"] .file-hint {
+      color: #8BA194 !important;
+    }
+
+    [data-theme="dark"] .upload-progress-wrap {
+      background: #0A140E !important;
+      border-color: rgba(130, 229, 169, 0.2) !important;
+    }
+
+    [data-theme="dark"] .login-card {
+      background: #101D15 !important;
+      border: 1px solid rgba(130, 229, 169, 0.2) !important;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55) !important;
+    }
+
+    [data-theme="dark"] .login-card h2 {
+      color: #EDF5F0 !important;
+    }
+
+    [data-theme="dark"] .login-card p {
+      color: #A3B8AC !important;
+    }
+
+    [data-theme="dark"] .login-card input {
+      background: #08150D !important;
+      color: #EDF5F0 !important;
+      border-color: rgba(130, 229, 169, 0.25) !important;
+    }
+
+    [data-theme="dark"] .login-card input:focus {
+      border-color: #22C55E !important;
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18) !important;
+    }
+
+    [data-theme="dark"] .password-toggle-btn {
+      color: #A3B8AC;
+    }
+
+    [data-theme="dark"] .password-toggle-btn:hover {
+      color: #82E5A9;
+      background: rgba(255, 255, 255, 0.08);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ============ LOGIN SCREEN ============ -->
+  <div class="login-wrap" id="loginWrap" style="position: relative;">
+    <div style="position: absolute; top: 20px; right: 20px;">
+      <button class="theme-toggle-btn" aria-label="Toggle dark and light mode" title="Switch theme (Dark / Light)">
+        <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="login-card">
+      <img src="logo.png" alt="LICC logo">
+      <h2>Admin Login</h2>
+      <p>Living Waters International Christian Center</p>
+      <div class="login-error" id="loginError"></div>
+      <input type="email" id="loginEmail" placeholder="Admin email" autocomplete="username">
+      <div class="password-input-wrapper">
+        <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
+        <button type="button" class="password-toggle-btn" id="togglePasswordBtn" aria-label="Show password" title="Show password">
+          <svg class="eye-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          <svg class="eye-hide" style="display:none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+          </svg>
+        </button>
+      </div>
+      <button class="btn btn-primary btn-block" id="loginBtn">Log In</button>
+    </div>
+  </div>
+
+  <!-- ============ ADMIN DASHBOARD ============ -->
+  <div class="admin-body" id="adminBody">
+
+    <header class="admin-header">
+      <div class="container">
+        <div class="brand-mini">
+          <img src="logo.png" alt="LICC logo">
+          <span class="title">LICC Admin Panel</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:14px;">
+          <button class="theme-toggle-btn" aria-label="Toggle dark and light mode" title="Switch theme (Dark / Light)" style="background:rgba(255,255,255,0.12); border-color:rgba(255,255,255,0.25); color:white;">
+            <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+          <a href="index.html" style="color:white; font-size:0.85rem; opacity:0.85;" target="_blank">View Site ↗</a>
+          <button class="btn-logout" id="logoutBtn">Log Out</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="sermons">Sermons</button>
+        <button class="admin-tab" data-tab="events">Events</button>
+        <button class="admin-tab" data-tab="gallery">Gallery</button>
+        <button class="admin-tab" data-tab="news">News</button>
+        <button class="admin-tab" data-tab="branches">Branches</button>
+        <button class="admin-tab" data-tab="messages">Messages</button>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="setup-banner" id="setupBanner">
+        ⚠️ <strong>Setup needed:</strong> This admin panel isn't connected to a database yet. Open
+        <code>supabase-config.js</code> and add your Supabase project URL and key. See <code>SETUP-GUIDE.md</code> for
+        step-by-step instructions.
+      </div>
+    </div>
+
+    <!-- SERMONS TAB -->
+    <section class="admin-panel-section active" id="tab-sermons">
+      <div class="container admin-grid">
+        <div class="form-card">
+          <h3 id="sermonFormTitle">Add New Sermon</h3>
+          <input type="hidden" id="sermonId">
+          <div class="form-field">
+            <label>Sermon Title</label>
+            <input type="text" id="sermonTitle" placeholder="e.g. Living Water That Never Runs Dry">
+          </div>
+          <div class="form-field">
+            <label>Preacher</label>
+            <input type="text" id="sermonPreacher" placeholder="e.g. Rev. Anne Francis Kpeke-Johnson">
+          </div>
+          <div class="form-row-2">
+            <div class="form-field">
+              <label>Category</label>
+              <select id="sermonCategory">
+                <option>Sunday Service</option>
+                <option>Thursday Word &amp; Communion</option>
+                <option>Hour With Jesus (Saturday)</option>
+                <option>Power Night</option>
+                <option>Fruit / Covenant Service</option>
+                <option>Family &amp; Friends Service</option>
+                <option>Special Event</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>Date</label>
+              <input type="date" id="sermonDate">
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Video Source</label>
+            <select id="sermonSourceType">
+              <option value="youtube">YouTube Link</option>
+              <option value="upload">Upload Video File</option>
+            </select>
+          </div>
+          <div class="form-field" id="sermonYoutubeField">
+            <label>YouTube Video URL</label>
+            <input type="text" id="sermonYoutube" placeholder="https://www.youtube.com/watch?v=...">
+            <div class="file-hint">Paste the link from YouTube after uploading the sermon video there.</div>
+          </div>
+          <div class="form-field" id="sermonFileField" style="display:none;">
+            <label>Video File</label>
+            <input type="file" id="sermonFile" accept="video/*">
+            <div class="file-hint">Upload directly from your device. Large files may take a while depending on your
+              internet speed — keep this tab open until it finishes.</div>
+            <div class="upload-progress-wrap" id="sermonUploadProgress">
+              <div class="upload-progress-label">
+                <span>Uploading video…</span>
+                <span id="sermonProgressPct">0%</span>
+              </div>
+              <div class="upload-progress-bar-track">
+                <div class="upload-progress-bar-fill" id="sermonProgressBar"></div>
+              </div>
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Short Description (optional)</label>
+            <textarea id="sermonDescription" rows="3" placeholder="A short summary of the message"></textarea>
+          </div>
+          <button class="btn btn-primary btn-block" id="sermonSaveBtn">Add Sermon</button>
+          <button class="btn btn-outline btn-block" id="sermonCancelBtn" style="margin-top:10px; display:none;">Cancel
+            Edit</button>
+        </div>
+        <div>
+          <div class="item-list" id="sermonList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EVENTS TAB -->
+    <section class="admin-panel-section" id="tab-events">
+      <div class="container admin-grid">
+        <div class="form-card">
+          <h3 id="eventFormTitle">Add New Event</h3>
+          <input type="hidden" id="eventId">
+          <div class="form-field">
+            <label>Event Title</label>
+            <input type="text" id="eventTitle" placeholder="e.g. Mid-Year Thanksgiving Service">
+          </div>
+          <div class="form-field">
+            <label>Date</label>
+            <input type="date" id="eventDate">
+          </div>
+          <div class="form-row-2">
+            <div class="form-field">
+              <label>Start Time</label>
+              <input type="text" id="eventStart" placeholder="e.g. 8:30am">
+            </div>
+            <div class="form-field">
+              <label>End Time</label>
+              <input type="text" id="eventEnd" placeholder="e.g. 11:00am">
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Location</label>
+            <input type="text" id="eventLocation" placeholder="e.g. Main Auditorium">
+          </div>
+          <div class="form-field">
+            <label>Event Image (optional)</label>
+            <input type="file" id="eventFile" accept="image/*">
+            <div class="file-hint">A flyer or photo for this event. JPG or PNG, ideally under 3MB.</div>
+          </div>
+          <div class="form-field">
+            <label>Description</label>
+            <textarea id="eventDescription" rows="3" placeholder="What's this event about?"></textarea>
+          </div>
+          <button class="btn btn-primary btn-block" id="eventSaveBtn">Add Event</button>
+          <button class="btn btn-outline btn-block" id="eventCancelBtn" style="margin-top:10px; display:none;">Cancel
+            Edit</button>
+        </div>
+        <div>
+          <div class="item-list" id="eventList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GALLERY TAB -->
+    <section class="admin-panel-section" id="tab-gallery">
+      <div class="container admin-grid">
+        <div class="form-card">
+          <h3>Add Photos to Gallery</h3>
+          <div class="form-field">
+            <label>Select Photo(s)</label>
+            <input type="file" id="galleryFile" accept="image/*" multiple>
+            <div class="file-hint">Select one or more photos (JPG, PNG, WebP). Hold Ctrl or Shift to pick multiple.</div>
+            <div id="galleryFileCount" style="margin-top:8px; font-size:0.86rem; color:var(--green-primary); font-weight:600; display:none;"></div>
+          </div>
+          <div class="form-field">
+            <label>Caption (optional)</label>
+            <input type="text" id="galleryCaption" placeholder="e.g. Sunday worship, June 2026">
+            <div class="file-hint" style="margin-top:4px;">Applied to all selected photos in this batch.</div>
+          </div>
+          <div class="upload-progress-wrap" id="galleryUploadProgress" style="display:none; margin-bottom:14px;">
+            <div class="upload-progress-label">
+              <span id="galleryProgressStatus">Uploading photos…</span>
+              <span id="galleryProgressPct">0%</span>
+            </div>
+            <div class="upload-progress-bar-track">
+              <div class="upload-progress-bar-fill" id="galleryProgressBar"></div>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-block" id="gallerySaveBtn">Upload Photos</button>
+        </div>
+        <div>
+          <div class="item-list" id="galleryList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEWS TAB -->
+    <section class="admin-panel-section" id="tab-news">
+      <div class="container admin-grid">
+        <div class="form-card">
+          <h3 id="newsFormTitle">Add New Post</h3>
+          <input type="hidden" id="newsId">
+          <div class="form-field">
+            <label>Post Title</label>
+            <input type="text" id="newsTitle" placeholder="e.g. Recap: Our Recent Outreach Program">
+          </div>
+          <div class="form-field">
+            <label>Author</label>
+            <input type="text" id="newsAuthor" placeholder="e.g. LICC Admin" value="LICC Admin">
+          </div>
+          <div class="form-field">
+            <label>Date</label>
+            <input type="date" id="newsDate">
+          </div>
+          <div class="form-field">
+            <label>Cover Image (optional)</label>
+            <input type="file" id="newsFile" accept="image/*">
+          </div>
+          <div class="form-field">
+            <label>Post Content</label>
+            <textarea id="newsBody" rows="6" placeholder="Write the full post here..."></textarea>
+          </div>
+          <button class="btn btn-primary btn-block" id="newsSaveBtn">Publish Post</button>
+          <button class="btn btn-outline btn-block" id="newsCancelBtn" style="margin-top:10px; display:none;">Cancel
+            Edit</button>
+        </div>
+        <div>
+          <div class="item-list" id="newsList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- MESSAGES TAB -->
+    <!-- ========================================== -->
+    <section class="admin-panel-section" id="tab-messages">
+      <div class="container" style="max-width: 800px; margin: 0 auto;">
+        <h3 style="margin-bottom: 24px; font-size: 1.25rem;">Incoming Messages</h3>
+        <div id="messagesList" class="item-list"></div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- BRANCHES TAB -->
+    <!-- ========================================== -->
+    <section class="admin-panel-section" id="tab-branches">
+      <div class="container admin-grid">
+        <div class="form-card">
+          <h3 id="branchFormTitle">Add New Branch</h3>
+          <input type="hidden" id="branchId">
+          <div class="form-field">
+            <label>Branch / Campus Name *</label>
+            <input type="text" id="branchName" placeholder="e.g. Choba / Uniport Campus">
+          </div>
+          <div class="form-row-2">
+            <div class="form-field">
+              <label>Tag / Category</label>
+              <select id="branchTag">
+                <option value="Headquarters">Headquarters</option>
+                <option value="City Campus" selected>City Campus</option>
+                <option value="Campus Fellowship">Campus Fellowship</option>
+                <option value="Regional Campus">Regional Campus</option>
+                <option value="Online Campus">Online Campus</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>Display Order</label>
+              <input type="number" id="branchOrder" value="0" placeholder="0">
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Resident Pastor(s)</label>
+            <input type="text" id="branchPastor" placeholder="e.g. Pastor David Okon">
+          </div>
+          <div class="form-field">
+            <label>Physical Address *</label>
+            <textarea id="branchAddress" rows="2" placeholder="e.g. Beside Uniport Back Gate, East-West Road"></textarea>
+          </div>
+          <div class="form-row-2">
+            <div class="form-field">
+              <label>City</label>
+              <input type="text" id="branchCity" placeholder="Port Harcourt">
+            </div>
+            <div class="form-field">
+              <label>State / Region</label>
+              <input type="text" id="branchState" placeholder="Rivers State">
+            </div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-field">
+              <label>Phone Number</label>
+              <input type="tel" id="branchPhone" placeholder="08064512390">
+            </div>
+            <div class="form-field">
+              <label>WhatsApp Number</label>
+              <input type="tel" id="branchWhatsapp" placeholder="2348064512390">
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Weekly Service Times</label>
+            <textarea id="branchServiceTimes" rows="2" placeholder="e.g. Sunday Celebration: 8:00am; Midweek: 5:30pm"></textarea>
+          </div>
+          <div class="form-field">
+            <label>Google Maps Directions URL</label>
+            <input type="url" id="branchMapsUrl" placeholder="https://maps.google.com/...">
+          </div>
+          <button class="btn btn-primary btn-block" id="branchSaveBtn">Save Branch</button>
+          <button class="btn btn-outline btn-block" id="branchCancelBtn" style="margin-top:10px; display:none;">Cancel Edit</button>
+        </div>
+        <div>
+          <div class="item-list" id="branchesList"></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <style>
+    .message-card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: var(--shadow-soft);
+      border-left: 4px solid var(--line);
+      position: relative;
+    }
+    .message-card.unread {
+      border-left-color: var(--gold);
+      background: #FFFCF5;
+    }
+    .message-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      gap: 16px;
+    }
+    .message-sender {
+      font-weight: 700;
+      color: var(--ink);
+      font-size: 1.05rem;
+    }
+    .message-meta {
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      margin-top: 4px;
+    }
+    .message-reason {
+      display: inline-block;
+      padding: 4px 10px;
+      background: var(--bg-warm-2);
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--green-deep);
+      margin-bottom: 12px;
+    }
+    .message-body {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--ink);
+      background: var(--bg-warm-1);
+      padding: 16px;
+      border-radius: 8px;
+    }
+    .message-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      justify-content: flex-end;
+    }
+  </style>
+
+  <script src="supabase-config.js"></script>
+  <script src="admin.js"></script>
+  <script src="main.js"></script>
+</body>
+
+</html>
