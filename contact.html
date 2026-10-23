@@ -7,6 +7,8 @@
   <title>Contact Us | Living Waters International Christian Center</title>
   <meta name="description"
     content="Get in touch with Living Waters International Christian Center. Find our address, map, and contact details in Port Harcourt, Rivers State.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <link rel="icon" href="logo.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -178,10 +180,15 @@
             <div class="eyebrow">Send a Message</div>
             <h2 style="margin-top:14px;">Get in touch</h2>
             <form class="contact-form" id="contactForm" style="margin-top:28px;">
+              <!-- Anti-bot honeypot field (hidden from legitimate users) -->
+              <div style="position:absolute;left:-9999px;opacity:0;pointer-events:none;" aria-hidden="true">
+                <label for="contact_hp_check">Leave this field blank</label>
+                <input type="text" id="contact_hp_check" name="hp_check" tabindex="-1" autocomplete="off">
+              </div>
               <div class="form-row">
                 <div class="form-field">
                   <label for="name">Full Name</label>
-                  <input type="text" id="name" name="name" required>
+                  <input type="text" id="name" name="name" required maxlength="100">
                 </div>
                 <div class="form-field">
                   <label for="phone">Phone Number</label>
@@ -297,12 +304,12 @@
           <p style="max-width:280px; font-size:0.92rem;">A church family in Port Harcourt devoted to worship, the Word,
             and walking with one another through life.</p>
           <div class="social-row" style="margin-top:22px;">
-            <a href="https://www.facebook.com/theliccglobal" target="_blank" rel="noopener" aria-label="Facebook"><svg
+            <a href="https://www.facebook.com/theliccglobal" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg
                 viewBox="0 0 24 24" fill="white">
                 <path
                   d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z" />
               </svg></a>
-            <a href="https://www.youtube.com/@liccglobaltv" target="_blank" rel="noopener" aria-label="YouTube"><svg
+            <a href="https://www.youtube.com/@liccglobaltv" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg
                 viewBox="0 0 24 24" fill="white">
                 <path
                   d="M22.5 7.2s-.2-1.6-.9-2.3c-.8-.9-1.7-.9-2.2-1C16 3.6 12 3.6 12 3.6h0s-4 0-7.4.3c-.5.1-1.4.1-2.2 1-.7.7-.9 2.3-.9 2.3S1.2 9 1.2 10.9v1.9c0 1.9.3 3.7.3 3.7s.2 1.6.9 2.3c.8.9 1.9.9 2.4 1 1.7.2 7.2.3 7.2.3s4 0 7.4-.3c.5-.1 1.4-.1 2.2-1 .7-.7.9-2.3.9-2.3s.3-1.9.3-3.7v-1.9c0-1.9-.3-3.7-.3-3.7zM9.7 14.9V8.7l6 3.1-6 3.1z" />
@@ -365,41 +372,86 @@
     })();
 
     // CONTACT FORM HANDLER
+    // CONTACT FORM HANDLER (Secured with anti-spam honeypot, rate limiting, and strict input validation)
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
       contactForm.addEventListener('submit', async function(e) {
         e.preventDefault();
-        
+
+        // 1. Anti-bot honeypot check
+        const formData = new FormData(contactForm);
+        const hp = formData.get('hp_check');
+        if (hp) {
+          // Automated bot triggered honeypot - silently pretend success
+          alert('Thank you for reaching out! Your message has been sent successfully.');
+          contactForm.reset();
+          return;
+        }
+
         const submitBtn = contactForm.querySelector('button[type="submit"]');
         const originalText = submitBtn.textContent;
+
+        // 2. Client-side rate limiting (15-second cooldown)
+        const lastSubKey = 'licc_last_contact_ts';
+        const lastSub = parseInt(localStorage.getItem(lastSubKey) || '0', 10);
+        const now = Date.now();
+        if (now - lastSub < 15000) {
+          alert('Please wait a few seconds before submitting another message.');
+          return;
+        }
+
+        // 3. Sanitized input validation
+        const name = (formData.get('name') || '').toString().trim();
+        const phone = (formData.get('phone') || '').toString().trim();
+        const email = (formData.get('email') || '').toString().trim();
+        const reason = (formData.get('reason') || 'General Inquiry').toString().trim();
+        const message = (formData.get('message') || '').toString().trim();
+
+        if (!name || name.length < 2 || name.length > 100) {
+          alert('Please enter your full name (between 2 and 100 characters).');
+          return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailRegex.test(email) || email.length > 254) {
+          alert('Please enter a valid email address.');
+          return;
+        }
+
+        if (phone && phone.length > 50) {
+          alert('Phone number must not exceed 50 characters.');
+          return;
+        }
+
+        if (!message || message.length < 5 || message.length > 5000) {
+          alert('Please enter a message between 5 and 5,000 characters.');
+          return;
+        }
+
         submitBtn.textContent = 'Sending...';
         submitBtn.disabled = true;
 
-        const formData = new FormData(contactForm);
-        const name = formData.get('name');
-        const phone = formData.get('phone') || '';
-        const email = formData.get('email');
-        const reason = formData.get('reason');
-        const message = formData.get('message');
-
         try {
-          // 1. SAVE TO SUPABASE (Admin Panel)
+          // 4. SAVE TO SUPABASE (Admin Panel) with read: false strictly enforced
           if (typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL.indexOf('YOUR_SUPABASE') === -1) {
             const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            const { error } = await client.from('messages').insert([{ name, phone, email, reason, message }]);
+            const { error } = await client.from('messages').insert([{
+              name: name,
+              phone: phone,
+              email: email,
+              reason: reason,
+              message: message,
+              read: false
+            }]);
             if (error) {
               console.error('Supabase save error:', error);
-              alert('Error saving to database: ' + error.message + '. Please check your Supabase table setup.');
-              submitBtn.textContent = originalText;
-              submitBtn.disabled = false;
-              return; // Stop here if DB save fails
+              alert('Error sending message: ' + error.message + '. Please try again or contact us directly.');
+              return;
             }
           }
 
-          // 2. SEND EMAIL VIA WEB3FORMS (Free email forwarding)
-          // To make this work, you just need to replace YOUR_WEB3FORMS_ACCESS_KEY with a free key from web3forms.com
-          const web3formsKey = 'YOUR_WEB3FORMS_ACCESS_KEY'; 
-          
+          // 5. OPTIONAL EMAIL FORWARDING VIA WEB3FORMS
+          const web3formsKey = 'YOUR_WEB3FORMS_ACCESS_KEY';
           if (web3formsKey !== 'YOUR_WEB3FORMS_ACCESS_KEY') {
             await fetch('https://api.web3forms.com/submit', {
               method: 'POST',
@@ -414,10 +466,11 @@
             });
           }
 
+          localStorage.setItem(lastSubKey, String(Date.now()));
           alert('Thank you for reaching out! Your message has been sent successfully.');
           contactForm.reset();
         } catch (err) {
-          alert('Sorry, there was an error sending your message. Please try again or call us directly.');
+          alert('Sorry, there was an unexpected error sending your message. Please try again or call us directly.');
           console.error(err);
         } finally {
           submitBtn.textContent = originalText;

@@ -7,6 +7,8 @@
   <title>Sermons | Living Waters International Christian Center</title>
   <meta name="description"
     content="Watch and listen to recent sermons from Living Waters International Christian Center, Port Harcourt.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <link rel="icon" href="logo.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -220,7 +222,7 @@
         <h2 style="color:white;">Subscribe for new sermons</h2>
         <p style="max-width:480px; margin:14px auto 28px;">Follow us on YouTube and social media so you never miss a
           message.</p>
-        <a href="https://www.youtube.com/@liccglobaltv" target="_blank" rel="noopener" class="btn btn-gold">Visit Our YouTube Channel</a>
+        <a href="https://www.youtube.com/@liccglobaltv" target="_blank" rel="noopener noreferrer" class="btn btn-gold">Visit Our YouTube Channel</a>
       </div>
     </section>
 
@@ -237,12 +239,12 @@
           <p style="max-width:280px; font-size:0.92rem;">A church family in Port Harcourt devoted to worship, the Word,
             and walking with one another through life.</p>
           <div class="social-row" style="margin-top:22px;">
-            <a href="https://www.facebook.com/theliccglobal" target="_blank" rel="noopener" aria-label="Facebook"><svg
+            <a href="https://www.facebook.com/theliccglobal" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg
                 viewBox="0 0 24 24" fill="white">
                 <path
                   d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z" />
               </svg></a>
-            <a href="https://www.youtube.com/@liccglobaltv" target="_blank" rel="noopener" aria-label="YouTube"><svg
+            <a href="https://www.youtube.com/@liccglobaltv" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg
                 viewBox="0 0 24 24" fill="white">
                 <path
                   d="M22.5 7.2s-.2-1.6-.9-2.3c-.8-.9-1.7-.9-2.2-1C16 3.6 12 3.6 12 3.6h0s-4 0-7.4.3c-.5.1-1.4.1-2.2 1-.7.7-.9 2.3-.9 2.3S1.2 9 1.2 10.9v1.9c0 1.9.3 3.7.3 3.7s.2 1.6.9 2.3c.8.9 1.9.9 2.4 1 1.7.2 7.2.3 7.2.3s4 0 7.4-.3c.5-.1 1.4-.1 2.2-1 .7-.7.9-2.3.9-2.3s.3-1.9.3-3.7v-1.9c0-1.9-.3-3.7-.3-3.7zM9.7 14.9V8.7l6 3.1-6 3.1z" />
@@ -289,42 +291,66 @@
   <script src="supabase-config.js"></script>
   <script>
     // ---------- Dynamic sermon loading from Supabase ----------
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str).replace(/[&<>"']/g, function (c) {
+        return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+      });
+    }
+
+    function sanitizeUrl(url) {
+      if (!url || typeof url !== 'string') return '';
+      var trimmed = url.trim();
+      if (/^https?:\/\/[^\s"'<>]+$/i.test(trimmed)) {
+        return trimmed.replace(/[<>"']/g, function (c) {
+          return ({ '<': '%3C', '>': '%3E', '"': '%22', "'": '%27' })[c];
+        });
+      }
+      return '';
+    }
+
     function getYouTubeId(url) {
       if (!url) return null;
-      var match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+      var match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,12})/);
       return match ? match[1] : null;
     }
 
     function sermonCardHtml(s) {
-      var isUpload = s.youtube_url && s.youtube_url.indexOf('supabase') !== -1;
+      var safeVideoUrl = sanitizeUrl(s.youtube_url);
+      var isUpload = safeVideoUrl && safeVideoUrl.indexOf('supabase') !== -1;
       var dateStr = '';
       if (s.sermon_date) {
         var d = new Date(s.sermon_date + 'T00:00:00');
-        dateStr = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        dateStr = isNaN(d.getTime()) ? escapeHtml(s.sermon_date) : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
       }
+
+      var safeTitle = escapeHtml(s.title || '');
+      var safePreacher = escapeHtml(s.preacher || '');
+      var safeCategory = escapeHtml(s.category || 'Sunday Service');
 
       if (isUpload) {
         return '<div class="sermon-card card reveal">' +
           '<div class="sermon-thumb" style="background:#000;">' +
-          '<video src="' + s.youtube_url + '" controls preload="metadata" style="width:100%;height:100%;object-fit:contain;background:#000;"></video>' +
+          '<video src="' + safeVideoUrl + '" controls preload="metadata" style="width:100%;height:100%;object-fit:contain;background:#000;"></video>' +
           '</div>' +
-          '<span class="sermon-tag">' + (s.category || 'Sunday Service') + '</span>' +
-          '<h3 style="font-size:1.1rem;">' + s.title + '</h3>' +
-          '<p class="sermon-meta">' + s.preacher + (dateStr ? ' &middot; ' + dateStr : '') + '</p>' +
+          '<span class="sermon-tag">' + safeCategory + '</span>' +
+          '<h3 style="font-size:1.1rem;">' + safeTitle + '</h3>' +
+          '<p class="sermon-meta">' + safePreacher + (dateStr ? ' &middot; ' + dateStr : '') + '</p>' +
           '</div>';
       }
 
       var ytId = getYouTubeId(s.youtube_url);
       var thumb = ytId
-        ? '<img src="https://img.youtube.com/vi/' + ytId + '/hqdefault.jpg" alt="" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">'
+        ? '<img src="https://img.youtube.com/vi/' + encodeURIComponent(ytId) + '/hqdefault.jpg" alt="" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">'
         : '';
-      return '<a class="sermon-card card reveal" href="' + (s.youtube_url || '#') + '" target="_blank" rel="noopener" style="text-decoration:none;">' +
+      var cardHref = safeVideoUrl || '#';
+      return '<a class="sermon-card card reveal" href="' + cardHref + '" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">' +
         '<div class="sermon-thumb">' + thumb +
         '<div class="play-btn" style="position:relative;z-index:2;"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>' +
         '</div>' +
-        '<span class="sermon-tag">' + (s.category || 'Sunday Service') + '</span>' +
-        '<h3 style="font-size:1.1rem;">' + s.title + '</h3>' +
-        '<p class="sermon-meta">' + s.preacher + (dateStr ? ' &middot; ' + dateStr : '') + '</p>' +
+        '<span class="sermon-tag">' + safeCategory + '</span>' +
+        '<h3 style="font-size:1.1rem;">' + safeTitle + '</h3>' +
+        '<p class="sermon-meta">' + safePreacher + (dateStr ? ' &middot; ' + dateStr : '') + '</p>' +
         '</a>';
     }
 

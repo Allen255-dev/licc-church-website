@@ -18,6 +18,15 @@ function isConfigured() {
     SUPABASE_URL.length > 10;
 }
 
+// Security & Validation Constants
+const ALLOWED_IMAGE_EXTS = ['jpg', 'jpeg', 'png', 'webp', 'avif', 'gif'];
+const ALLOWED_IMAGE_MIMES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'];
+const MAX_IMAGE_SIZE = 12 * 1024 * 1024; // 12 MB
+
+const ALLOWED_VIDEO_EXTS = ['mp4', 'webm', 'mov', 'm4v'];
+const ALLOWED_VIDEO_MIMES = ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-m4v'];
+const MAX_VIDEO_SIZE = 400 * 1024 * 1024; // 400 MB
+
 // ---------- AUTH ----------
 const loginWrap = document.getElementById('loginWrap');
 const adminBody = document.getElementById('adminBody');
@@ -25,18 +34,36 @@ const loginError = document.getElementById('loginError');
 
 async function checkSession() {
   if (!isConfigured()) {
-    loginWrap.style.display = 'none';
-    adminBody.style.display = 'block';
-    document.getElementById('setupBanner').style.display = 'block';
+    loginWrap.style.display = 'flex';
+    adminBody.style.display = 'none';
+    const banner = document.getElementById('setupBanner');
+    if (banner) banner.style.display = 'block';
     return;
   }
-  const { data } = await supabaseClient.auth.getSession();
-  if (data && data.session) {
-    showAdmin();
-  } else {
+  try {
+    const { data } = await supabaseClient.auth.getSession();
+    if (data && data.session) {
+      showAdmin();
+    } else {
+      loginWrap.style.display = 'flex';
+      adminBody.style.display = 'none';
+    }
+  } catch (err) {
     loginWrap.style.display = 'flex';
     adminBody.style.display = 'none';
   }
+}
+
+// Keep auth state in sync across tabs and token refreshes
+if (typeof supabaseClient !== 'undefined' && supabaseClient.auth) {
+  supabaseClient.auth.onAuthStateChange(function (event, session) {
+    if (event === 'SIGNED_OUT' || !session) {
+      loginWrap.style.display = 'flex';
+      adminBody.style.display = 'none';
+    } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+      showAdmin();
+    }
+  });
 }
 
 function showAdmin() {
@@ -110,12 +137,28 @@ document.querySelectorAll('.admin-tab').forEach(function (tab) {
   });
 });
 
-// ---------- HELPERS ----------
+// ---------- HELPERS & SANITIZERS ----------
 function escapeHtml(str) {
-  if (!str) return '';
-  return str.replace(/[&<>"']/g, function (c) {
+  if (str === null || str === undefined) return '';
+  return String(str).replace(/[&<>"']/g, function (c) {
     return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
   });
+}
+
+function sanitizeUrl(url) {
+  if (!url || typeof url !== 'string') return '';
+  const trimmed = url.trim();
+  if (/^https?:\/\/[^\s"'<>]+$/i.test(trimmed)) {
+    return trimmed.replace(/[<>"']/g, function (c) {
+      return ({ '<': '%3C', '>': '%3E', '"': '%22', "'": '%27' })[c];
+    });
+  }
+  return '';
+}
+
+function sanitizeId(id) {
+  if (!id || typeof id !== 'string') return '';
+  return id.replace(/[^a-zA-Z0-9_-]/g, '');
 }
 
 function formatDate(d) {
@@ -125,9 +168,29 @@ function formatDate(d) {
 }
 
 async function uploadImage(file) {
-  const ext = file.name.split('.').pop();
-  const path = 'media/' + Date.now() + '-' + Math.random().toString(36).slice(2) + '.' + ext;
-  const { error } = await supabaseClient.storage.from('media').upload(path, file);
+  if (!file) throw new Error('No file selected');
+  if (file.size > MAX_IMAGE_SIZE) {
+    throw new Error('Image too large. Maximum size is ' + (MAX_IMAGE_SIZE / (1024 * 1024)) + 'MB.');
+  }
+  const ext = (file.name.split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  if (!ALLOWED_IMAGE_EXTS.includes(ext)) {
+    throw new Error('Invalid image type (.' + ext + '). Allowed: JPG, PNG, WEBP, AVIF, GIF.');
+  }
+  if (file.type && !ALLOWED_IMAGE_MIMES.includes(file.type.toLowerCase())) {
+    throw new Error('Invalid image format (' + file.type + ').');
+  }
+
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+  if (!sessionData || !sessionData.session) {
+    throw new Error('Authentication required: please log in as admin.');
+  }
+
+  const cleanName = Date.now() + '-' + Math.random().toString(36).slice(2, 10) + '.' + ext;
+  const path = 'media/' + cleanName;
+  const { error } = await supabaseClient.storage.from('media').upload(path, file, {
+    contentType: file.type || 'image/' + ext,
+    upsert: false
+  });
   if (error) throw error;
   const { data } = supabaseClient.storage.from('media').getPublicUrl(path);
   return data.publicUrl;
@@ -146,14 +209,15 @@ async function loadSermons() {
   if (error) { showToast('Error loading sermons: ' + error.message, true); return; }
   if (!data || data.length === 0) { list.innerHTML = '<div class="empty-state">No sermons yet. Add your first one!</div>'; return; }
   list.innerHTML = data.map(function (s) {
+    var safeId = sanitizeId(s.id);
     var isUpload = s.youtube_url && s.youtube_url.indexOf('supabase') !== -1;
     var sourceTag = isUpload ? 'Uploaded video' : 'YouTube';
     return '<div class="item-row">' +
       '<div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="#0D5C32" stroke-width="1.6"><path d="M8 5v14l11-7z"/></svg></div>' +
       '<div class="info"><h4>' + escapeHtml(s.title) + '</h4><p>' + escapeHtml(s.preacher) + ' · ' + escapeHtml(s.category) + ' · ' + formatDate(s.sermon_date) + ' · ' + sourceTag + '</p></div>' +
       '<div class="actions">' +
-      '<button class="icon-btn edit" onclick="editSermon(\'' + s.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>' +
-      '<button class="icon-btn danger" onclick="deleteSermon(\'' + s.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="#C42F2F" stroke-width="1.6"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg></button>' +
+      '<button class="icon-btn edit" onclick="editSermon(\'' + safeId + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>' +
+      '<button class="icon-btn danger" onclick="deleteSermon(\'' + safeId + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="#C42F2F" stroke-width="1.6"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg></button>' +
       '</div></div>';
   }).join('');
 }
@@ -224,19 +288,38 @@ function resetSermonForm() {
 
 function uploadVideoWithProgress(file, onProgress) {
   return new Promise(async function (resolve, reject) {
-    const ext = file.name.split('.').pop();
-    const path = 'sermons/' + Date.now() + '-' + Math.random().toString(36).slice(2) + '.' + ext;
-    // Use supabase upload with fetch-based approach but track with XHR simulation
-    // First get a signed upload URL, or use direct upload with progress
+    if (!file) {
+      reject(new Error('No video file selected'));
+      return;
+    }
+    if (file.size > MAX_VIDEO_SIZE) {
+      reject(new Error('Video too large. Maximum size is ' + (MAX_VIDEO_SIZE / (1024 * 1024)) + 'MB.'));
+      return;
+    }
+    const ext = (file.name.split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (!ALLOWED_VIDEO_EXTS.includes(ext)) {
+      reject(new Error('Invalid video type (.' + ext + '). Allowed formats: MP4, WEBM, MOV, M4V.'));
+      return;
+    }
+    if (file.type && !ALLOWED_VIDEO_MIMES.includes(file.type.toLowerCase())) {
+      reject(new Error('Invalid video format (' + file.type + ').'));
+      return;
+    }
+
     try {
-      // Supabase JS v2 upload doesn't expose progress natively, use XHR directly
       const { data: sessionData } = await supabaseClient.auth.getSession();
-      const accessToken = sessionData && sessionData.session ? sessionData.session.access_token : SUPABASE_ANON_KEY;
+      if (!sessionData || !sessionData.session || !sessionData.session.access_token) {
+        reject(new Error('Admin session expired or unauthenticated. Please log in again.'));
+        return;
+      }
+      const accessToken = sessionData.session.access_token;
+      const cleanName = Date.now() + '-' + Math.random().toString(36).slice(2, 10) + '.' + ext;
+      const path = 'sermons/' + cleanName;
       const uploadUrl = SUPABASE_URL + '/storage/v1/object/media/' + path;
       const xhr = new XMLHttpRequest();
       xhr.open('POST', uploadUrl, true);
       xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-      xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
+      xhr.setRequestHeader('Content-Type', file.type || 'video/' + ext);
       xhr.setRequestHeader('x-upsert', 'false');
       xhr.upload.addEventListener('progress', function (e) {
         if (e.lengthComputable && onProgress) {
@@ -248,8 +331,11 @@ function uploadVideoWithProgress(file, onProgress) {
           const publicUrl = SUPABASE_URL + '/storage/v1/object/public/media/' + path;
           resolve(publicUrl);
         } else {
-          var msg = xhr.responseText || 'Upload failed (status ' + xhr.status + ')';
-          try { msg = JSON.parse(xhr.responseText).message || msg; } catch(e) {}
+          var msg = 'Upload failed (status ' + xhr.status + ')';
+          try {
+            var parsed = JSON.parse(xhr.responseText);
+            msg = parsed.message || parsed.error || msg;
+          } catch(e) {}
           reject(new Error(msg));
         }
       });
@@ -354,15 +440,17 @@ async function loadEvents() {
   if (error) { showToast('Error loading events: ' + error.message, true); return; }
   if (!data || data.length === 0) { list.innerHTML = '<div class="empty-state">No events yet. Add your first one!</div>'; return; }
   list.innerHTML = data.map(function (e) {
-    var thumb = e.image_url
-      ? '<div class="thumb" style="background-image:url(\'' + e.image_url + '\'); background-size:cover; background-position:center;"></div>'
+    var safeId = sanitizeId(e.id);
+    var safeImg = sanitizeUrl(e.image_url);
+    var thumb = safeImg
+      ? '<div class="thumb" style="background-image:url(\'' + safeImg + '\'); background-size:cover; background-position:center;"></div>'
       : '<div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="#0D5C32" stroke-width="1.6"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>';
     return '<div class="item-row">' +
       thumb +
       '<div class="info"><h4>' + escapeHtml(e.title) + '</h4><p>' + formatDate(e.event_date) + (e.start_time ? ' · ' + escapeHtml(e.start_time) + (e.end_time ? '–' + escapeHtml(e.end_time) : '') : '') + ' · ' + escapeHtml(e.location || '') + '</p></div>' +
       '<div class="actions">' +
-      '<button class="icon-btn edit" onclick="editEvent(\'' + e.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>' +
-      '<button class="icon-btn danger" onclick="deleteEvent(\'' + e.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="#C42F2F" stroke-width="1.6"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg></button>' +
+      '<button class="icon-btn edit" onclick="editEvent(\'' + safeId + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>' +
+      '<button class="icon-btn danger" onclick="deleteEvent(\'' + safeId + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="#C42F2F" stroke-width="1.6"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg></button>' +
       '</div></div>';
   }).join('');
 }
@@ -480,6 +568,7 @@ async function loadMessages() {
   if (error) { showToast('Error loading messages: ' + error.message, true); return; }
   if (!data || data.length === 0) { list.innerHTML = '<div class="empty-state">No messages yet. When people use the contact form, they will appear here!</div>'; return; }
   list.innerHTML = data.map(function (m) {
+    const safeId = sanitizeId(m.id);
     const isUnread = !m.read;
     const cardClass = isUnread ? 'message-card unread' : 'message-card';
     const dateStr = new Date(m.created_at).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' });
@@ -494,8 +583,8 @@ async function loadMessages() {
       (m.reason ? '<div class="message-reason">' + escapeHtml(m.reason) + '</div>' : '') +
       '<div class="message-body">' + escapeHtml(m.message).replace(/\n/g, '<br>') + '</div>' +
       '<div class="message-actions">' +
-      (isUnread ? '<button class="btn btn-outline" style="padding:6px 14px;font-size:0.8rem;" onclick="markMessageRead(\'' + m.id + '\')">Mark as Read</button>' : '') +
-      '<button class="btn" style="background:#C42F2F;color:white;border:none;padding:6px 14px;font-size:0.8rem;" onclick="deleteMessage(\'' + m.id + '\')">Delete</button>' +
+      (isUnread ? '<button class="btn btn-outline" style="padding:6px 14px;font-size:0.8rem;" onclick="markMessageRead(\'' + safeId + '\')">Mark as Read</button>' : '') +
+      '<button class="btn" style="background:#C42F2F;color:white;border:none;padding:6px 14px;font-size:0.8rem;" onclick="deleteMessage(\'' + safeId + '\')">Delete</button>' +
       '</div></div>';
   }).join('');
 }
@@ -521,11 +610,16 @@ async function loadGallery() {
   if (error) { showToast('Error loading gallery: ' + error.message, true); return; }
   if (!data || data.length === 0) { list.innerHTML = '<div class="empty-state">No photos yet. Upload your first one!</div>'; return; }
   list.innerHTML = data.map(function (g) {
+    var safeId = sanitizeId(g.id);
+    var safeImg = sanitizeUrl(g.image_url);
+    var thumbHtml = safeImg
+      ? '<div class="thumb" style="background-image:url(\'' + safeImg + '\')"></div>'
+      : '<div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="#0D5C32" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>';
     return '<div class="item-row">' +
-      '<div class="thumb" style="background-image:url(\'' + g.image_url + '\')"></div>' +
+      thumbHtml +
       '<div class="info"><h4>' + escapeHtml(g.caption || 'Untitled photo') + '</h4><p>Added ' + formatDate(g.created_at ? g.created_at.split('T')[0] : '') + '</p></div>' +
       '<div class="actions">' +
-      '<button class="icon-btn danger" onclick="deleteGalleryItem(\'' + g.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="#C42F2F" stroke-width="1.6"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg></button>' +
+      '<button class="icon-btn danger" onclick="deleteGalleryItem(\'' + safeId + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="#C42F2F" stroke-width="1.6"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg></button>' +
       '</div></div>';
   }).join('');
 }
@@ -629,14 +723,16 @@ async function loadNews() {
   if (error) { showToast('Error loading news: ' + error.message, true); return; }
   if (!data || data.length === 0) { list.innerHTML = '<div class="empty-state">No posts yet. Publish your first one!</div>'; return; }
   list.innerHTML = data.map(function (n) {
+    var safeId = sanitizeId(n.id);
+    var safeImg = sanitizeUrl(n.image_url);
     return '<div class="item-row">' +
-      '<div class="thumb"' + (n.image_url ? ' style="background-image:url(\'' + n.image_url + '\')"' : '') + '>' +
-      (n.image_url ? '' : '<svg viewBox="0 0 24 24" fill="none" stroke="#0D5C32" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>') +
+      '<div class="thumb"' + (safeImg ? ' style="background-image:url(\'' + safeImg + '\')"' : '') + '>' +
+      (safeImg ? '' : '<svg viewBox="0 0 24 24" fill="none" stroke="#0D5C32" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>') +
       '</div>' +
       '<div class="info"><h4>' + escapeHtml(n.title) + '</h4><p>' + escapeHtml(n.author) + ' · ' + formatDate(n.published_date) + '</p></div>' +
       '<div class="actions">' +
-      '<button class="icon-btn edit" onclick="editNews(\'' + n.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>' +
-      '<button class="icon-btn danger" onclick="deleteNews(\'' + n.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="#C42F2F" stroke-width="1.6"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg></button>' +
+      '<button class="icon-btn edit" onclick="editNews(\'' + safeId + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>' +
+      '<button class="icon-btn danger" onclick="deleteNews(\'' + safeId + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="#C42F2F" stroke-width="1.6"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg></button>' +
       '</div></div>';
   }).join('');
 }
@@ -749,6 +845,7 @@ async function loadAdminBranches() {
     }
 
     branchesList.innerHTML = adminBranchesData.map(function (b) {
+      var safeId = sanitizeId(b.id);
       return '<div class="item-row">' +
         '<div class="thumb" style="display:flex; flex-direction:column; align-items:center; justify-content:center; background:var(--bg-warm-2);">' +
           '<span style="font-size:1.4rem;">🏛️</span>' +
@@ -761,8 +858,8 @@ async function loadAdminBranches() {
           (b.service_times ? '<p style="font-size:0.8rem; color:var(--ink-soft); margin-top:2px;">🕒 ' + escapeHtml(b.service_times) + '</p>' : '') +
         '</div>' +
         '<div class="item-actions">' +
-          '<button class="icon-btn edit" onclick="editBranch(\'' + b.id + '\')" title="Edit">&#9998;</button>' +
-          '<button class="icon-btn danger" onclick="deleteBranch(\'' + b.id + '\')" title="Delete">&#128465;</button>' +
+          '<button class="icon-btn edit" onclick="editBranch(\'' + safeId + '\')" title="Edit">&#9998;</button>' +
+          '<button class="icon-btn danger" onclick="deleteBranch(\'' + safeId + '\')" title="Delete">&#128465;</button>' +
         '</div>' +
       '</div>';
     }).join('');
@@ -889,6 +986,7 @@ async function loadQuotes() {
   if (error) { showToast('Error loading quotes: ' + error.message, true); return; }
   if (!data || data.length === 0) { list.innerHTML = '<div class="empty-state">No quotes yet. Add your first one!</div>'; return; }
   list.innerHTML = data.map(function (q) {
+    var safeId = sanitizeId(q.id);
     var statusBadge = q.active
       ? '<span style="background:#1A9B52;color:white;font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:100px;">Active</span>'
       : '<span style="background:#ccc;color:#555;font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:100px;">Inactive</span>';
@@ -897,8 +995,8 @@ async function loadQuotes() {
       '<div class="info"><h4>' + escapeHtml(q.quote_text.substring(0, 80)) + (q.quote_text.length > 80 ? '…' : '') + '</h4>' +
       '<p>' + escapeHtml(q.author_name) + (q.author_role ? ' · ' + escapeHtml(q.author_role) : '') + ' &nbsp;' + statusBadge + '</p></div>' +
       '<div class="actions">' +
-      '<button class="icon-btn edit" onclick="editQuote(\'' + q.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>' +
-      '<button class="icon-btn danger" onclick="deleteQuote(\'' + q.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="#C42F2F" stroke-width="1.6"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg></button>' +
+      '<button class="icon-btn edit" onclick="editQuote(\'' + safeId + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>' +
+      '<button class="icon-btn danger" onclick="deleteQuote(\'' + safeId + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="#C42F2F" stroke-width="1.6"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg></button>' +
       '</div></div>';
   }).join('');
 }

@@ -7,6 +7,8 @@
   <title>News & Blog | Living Waters International Christian Center</title>
   <meta name="description"
     content="News, updates, and articles from Living Waters International Christian Center, Port Harcourt.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <link rel="icon" href="logo.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -334,12 +336,12 @@
           <p style="max-width:280px; font-size:0.92rem;">A church family in Port Harcourt devoted to worship, the Word,
             and walking with one another through life.</p>
           <div class="social-row" style="margin-top:22px;">
-            <a href="https://www.facebook.com/theliccglobal" target="_blank" rel="noopener" aria-label="Facebook"><svg
+            <a href="https://www.facebook.com/theliccglobal" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg
                 viewBox="0 0 24 24" fill="white">
                 <path
                   d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z" />
               </svg></a>
-            <a href="https://www.youtube.com/@liccglobaltv" target="_blank" rel="noopener" aria-label="YouTube"><svg
+            <a href="https://www.youtube.com/@liccglobaltv" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg
                 viewBox="0 0 24 24" fill="white">
                 <path
                   d="M22.5 7.2s-.2-1.6-.9-2.3c-.8-.9-1.7-.9-2.2-1C16 3.6 12 3.6 12 3.6h0s-4 0-7.4.3c-.5.1-1.4.1-2.2 1-.7.7-.9 2.3-.9 2.3S1.2 9 1.2 10.9v1.9c0 1.9.3 3.7.3 3.7s.2 1.6.9 2.3c.8.9 1.9.9 2.4 1 1.7.2 7.2.3 7.2.3s4 0 7.4-.3c.5-.1 1.4-.1 2.2-1 .7-.7.9-2.3.9-2.3s.3-1.9.3-3.7v-1.9c0-1.9-.3-3.7-.3-3.7zM9.7 14.9V8.7l6 3.1-6 3.1z" />
@@ -429,6 +431,24 @@
       }
     ];
 
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str).replace(/[&<>"']/g, function (c) {
+        return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+      });
+    }
+
+    function sanitizeUrl(url) {
+      if (!url || typeof url !== 'string') return '';
+      var trimmed = url.trim();
+      if (/^https?:\/\/[^\s"'<>]+$/i.test(trimmed)) {
+        return trimmed.replace(/[<>"']/g, function (c) {
+          return ({ '<': '%3C', '>': '%3E', '"': '%22', "'": '%27' })[c];
+        });
+      }
+      return '';
+    }
+
     function openNewsModal(item) {
       if (!item) return;
       var overlay = document.getElementById('newsModalOverlay');
@@ -437,8 +457,9 @@
       var titleEl = document.getElementById('newsModalTitle');
       var contentEl = document.getElementById('newsModalContent');
 
-      if (item.image_url) {
-        thumbWrap.innerHTML = '<img class="news-modal-thumb" src="' + item.image_url + '" alt="' + (item.title || '') + '">';
+      var safeImg = sanitizeUrl(item.image_url);
+      if (safeImg) {
+        thumbWrap.innerHTML = '<img class="news-modal-thumb" src="' + safeImg + '" alt="' + escapeHtml(item.title || '') + '">';
       } else {
         thumbWrap.innerHTML = '<div class="news-modal-thumb-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="M21 15l-5-5L5 21" /></svg></div>';
       }
@@ -486,15 +507,20 @@
 
     function newsCardHtml(n, idx) {
       var d = new Date(n.published_date + 'T00:00:00');
-      var dateStr = isNaN(d.getTime()) ? n.published_date : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-      var thumb = n.image_url
-        ? '<div class="blog-thumb" style="background-image:url(\'' + n.image_url + '\'); background-size:cover; background-position:center;"></div>'
+      var dateStr = isNaN(d.getTime()) ? escapeHtml(n.published_date) : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      var safeImg = sanitizeUrl(n.image_url);
+      var thumb = safeImg
+        ? '<div class="blog-thumb" style="background-image:url(\'' + safeImg + '\'); background-size:cover; background-position:center;"></div>'
         : '<div class="blog-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>';
-      var excerpt = n.body ? n.body.slice(0, 130) + (n.body.length > 130 ? '…' : '') : '';
-      return '<article class="blog-card card reveal" data-news-id="' + idx + '">' +
+      var rawExcerpt = n.body ? n.body.slice(0, 130) + (n.body.length > 130 ? '…' : '') : '';
+      var excerpt = escapeHtml(rawExcerpt);
+      var safeTitle = escapeHtml(n.title);
+      var safeAuthor = escapeHtml(n.author || 'LICC Admin');
+
+      return '<article class="blog-card card reveal" data-news-id="' + parseInt(idx, 10) + '">' +
         thumb +
-        '<span class="blog-date">' + (n.author || 'LICC Admin') + ' &middot; ' + dateStr + '</span>' +
-        '<h3>' + n.title + '</h3>' +
+        '<span class="blog-date">' + safeAuthor + ' &middot; ' + dateStr + '</span>' +
+        '<h3>' + safeTitle + '</h3>' +
         '<p style="margin-top:8px; font-size:0.94rem;">' + excerpt + '</p>' +
         '</article>';
     }
